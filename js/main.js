@@ -4,8 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderTotalElement = document.getElementById('order-total');
     const resetOrderBtn = document.getElementById('reset-order-btn');
     const payOrderBtn = document.getElementById('pay-order-btn');
+    const orderHistoryItemsContainer = document.getElementById('order-history-items');
+    const clearHistoryBtn = document.getElementById('clear-history-btn');
 
     let order = [];
+    let orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
+    let historyIntervals = [];
 
     const menu = [
     // 1. ENTRADAS
@@ -362,6 +366,54 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    const renderOrderHistory = () => {
+        historyIntervals.forEach(clearInterval);
+        historyIntervals = [];
+        orderHistoryItemsContainer.innerHTML = '';
+        orderHistory.forEach(orderData => {
+            const orderHistoryItemElement = document.createElement('li');
+            const total = orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const itemsSummary = orderData.items.map(item => `${item.name} x ${item.quantity}`).join(', ');
+            const timerSpan = document.createElement('span');
+
+            const endTime = orderData.creationTime + orderData.deliveryTime * 60 * 1000;
+
+            const intervalId = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = endTime - now;
+                
+                if (distance < 0) {
+                    clearInterval(intervalId);
+                    timerSpan.innerHTML = "¡Pedido entregado!";
+                    return;
+                }
+
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                timerSpan.innerHTML = `Tiempo restante: ${minutes}m ${seconds}s`;
+            }, 1000);
+
+            historyIntervals.push(intervalId);
+
+            orderHistoryItemElement.innerHTML = `
+                <span><strong>Orden #${orderData.id}</strong> - ${new Date(orderData.date).toLocaleString()}</span>
+                <span>${itemsSummary}</span>
+                <span>Total a Pagar: $${total.toFixed(2)}</span>
+            `;
+            orderHistoryItemElement.appendChild(timerSpan);
+            const payButton = document.createElement('button');
+            payButton.className = 'btn-pay-history';
+            payButton.textContent = 'Pagar';
+            payButton.dataset.id = orderData.id;
+            payButton.addEventListener('click', (e) => {
+                const orderId = e.target.getAttribute('data-id');
+                alert(`Orden #${orderId} pagada.`);
+            });
+            orderHistoryItemElement.appendChild(payButton);
+            orderHistoryItemsContainer.appendChild(orderHistoryItemElement);
+        });
+    };
+
     const addItemToOrder = (item) => {
         const existingItem = order.find(orderItem => orderItem.name === item.name);
         if (existingItem) {
@@ -395,9 +447,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     payOrderBtn.addEventListener('click', () => {
-        alert(`Total a pagar: ${orderTotalElement.textContent}`);
+        const deliveryTime = Math.floor(Math.random() * (60 - 15 + 1)) + 15;
+        const newOrder = {
+            id: Date.now(),
+            date: new Date(),
+            creationTime: Date.now(),
+            items: order,
+            deliveryTime: deliveryTime
+        };
+        orderHistory.push(newOrder);
+        localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+        
+        alert(`¡Gracias por tu pedido! Tu pedido llegará en ${deliveryTime} minutos.`);
+        
+        order = [];
+        renderOrder();
+        renderOrderHistory();
+    });
+
+    clearHistoryBtn.addEventListener('click', () => {
+        orderHistory = [];
+        localStorage.removeItem('orderHistory');
+        renderOrderHistory();
     });
 
     renderMenu();
     renderOrder();
+    renderOrderHistory();
 });
