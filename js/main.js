@@ -6,6 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const payOrderBtn = document.getElementById('pay-order-btn');
     const orderHistoryItemsContainer = document.getElementById('order-history-items');
     const clearHistoryBtn = document.getElementById('clear-history-btn');
+    const lastNameInput = document.getElementById('last-name');
+    const tableNumberSelect = document.getElementById('table-number');
+    const extraItemNameInput = document.getElementById('extra-item-name');
+    const extraItemPriceInput = document.getElementById('extra-item-price');
+    const addExtraItemBtn = document.getElementById('add-extra-item-btn');
 
     let order = [];
     let orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
@@ -397,6 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             orderHistoryItemElement.innerHTML = `
                 <span><strong>Orden #${orderData.id}</strong> - ${new Date(orderData.date).toLocaleString()}</span>
+                <span><strong>Cliente:</strong> ${orderData.lastName} - <strong>Mesa:</strong> ${orderData.tableNumber}</span>
                 <span>${itemsSummary}</span>
                 <span>Total a Pagar: $${total.toFixed(2)}</span>
             `;
@@ -447,28 +453,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     payOrderBtn.addEventListener('click', () => {
+        const lastName = lastNameInput.value.trim();
+        const tableNumber = tableNumberSelect.value;
+
+        if (!lastName || !tableNumber) {
+            alert('Por favor, ingrese el apellido y seleccione una mesa.');
+            return;
+        }
+
         const deliveryTime = Math.floor(Math.random() * (60 - 15 + 1)) + 15;
         const newOrder = {
             id: Date.now(),
             date: new Date(),
             creationTime: Date.now(),
             items: order,
-            deliveryTime: deliveryTime
+            deliveryTime: deliveryTime,
+            lastName: lastName,
+            tableNumber: tableNumber
         };
         orderHistory.push(newOrder);
         localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
         
-        alert(`¡Gracias por tu pedido! Tu pedido llegará en ${deliveryTime} minutos.`);
+        alert(`¡Gracias por tu pedido, ${lastName}! Tu pedido para la mesa ${tableNumber} llegará en ${deliveryTime} minutos.`);
         
         order = [];
         renderOrder();
         renderOrderHistory();
+
+        // Clear customer info
+        lastNameInput.value = '';
+        tableNumberSelect.value = '';
     });
 
     clearHistoryBtn.addEventListener('click', () => {
         orderHistory = [];
         localStorage.removeItem('orderHistory');
         renderOrderHistory();
+    });
+
+    addExtraItemBtn.addEventListener('click', () => {
+        const name = extraItemNameInput.value.trim();
+        const price = parseFloat(extraItemPriceInput.value);
+
+        if (!name || isNaN(price) || price <= 0) {
+            alert('Por favor, ingrese un nombre y un precio válido para el extra.');
+            return;
+        }
+
+        addItemToOrder({ name: `EXTRA: ${name}`, price });
+
+        extraItemNameInput.value = '';
+        extraItemPriceInput.value = '';
     });
 
     renderMenu();

@@ -13,6 +13,31 @@
             <h2>Toma de Pedidos</h2>
         </header>
         <main>
+            <section id="customer-info">
+                <h2>Información del Cliente</h2>
+                <div class="form-group">
+                    <label for="last-name">Apellido:</label>
+                    <input type="text" id="last-name" name="last-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="table-number">Mesa:</label>
+                    <select id="table-number" name="table-number" required>
+                        <option value="">Seleccione una mesa</option>
+                        <option value="1">Mesa 1</option>
+                        <option value="2">Mesa 2</option>
+                        <option value="3">Mesa 3</option>
+                        <option value="4">Mesa 4</option>
+                        <option value="5">Mesa 5</option>
+                        <option value="6">Mesa 6</option>
+                        <option value="7">Mesa 7</option>
+                        <option value="8">Mesa 8</option>
+                        <option value="9">Mesa 9</option>
+                        <option value="10">Mesa 10</option>
+                        <option value="11">Mesa 11</option>
+                        <option value="12">Mesa 12</option>
+                    </select>
+                </div>
+            </section>
             <section id="menu">
                 <h2>Menú</h2>
                 <div id="menu-items">
@@ -21,6 +46,18 @@
             </section>
             <aside id="order">
                 <h2>Pedido Actual</h2>
+                <div id="extra-item-form">
+                    <h3>Agregar Extra</h3>
+                    <div class="form-group">
+                        <label for="extra-item-name">Nombre:</label>
+                        <input type="text" id="extra-item-name" placeholder="Nombre del extra">
+                    </div>
+                    <div class="form-group">
+                        <label for="extra-item-price">Precio:</label>
+                        <input type="number" id="extra-item-price" placeholder="0.00" step="0.01">
+                    </div>
+                    <button id="add-extra-item-btn" class="btn-primary">Agregar Extra</button>
+                </div>
                 <ul id="order-items">
                     <!-- Order items will be injected here -->
                 </ul>
