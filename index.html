@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Just Great Pizza - Toma de Pedidos</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app-container">
+        <header>
+            <h1>Just Great Pizza</h1>
+            <h2>Toma de Pedidos</h2>
+        </header>
+        <main>
+            <section id="menu">
+                <h2>Menú</h2>
+                <div id="menu-items">
+                    <!-- Menu items will be injected here -->
+                </div>
+            </section>
+            <aside id="order">
+                <h2>Pedido Actual</h2>
+                <ul id="order-items">
+                    <!-- Order items will be injected here -->
+                </ul>
+                <div class="order-summary">
+                    <strong>Total:</strong>
+                    <span id="order-total">$0.00</span>
+                </div>
+                <button id="reset-order-btn" class="btn-secondary">Reiniciar Pedido</button>
+                <button id="pay-order-btn" class="btn-primary">Pagar</button>
+            </aside>
+        </main>
+    </div>
+    <script src="js/main.js"></script>
+</body>
+</html>
