@@ -410,15 +410,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    const getRemainingTime = (order) => {
+        const now = Date.now();
+        const creationTime = order.creationTime;
+        const deliveryDuration = order.deliveryTime * 60 * 1000;
+        return deliveryDuration - (now - creationTime);
+    };
+
     const renderActiveOrders = () => {
         activeOrdersItemsContainer.innerHTML = '';
         Object.values(activeOrderIntervals).forEach(clearInterval);
         activeOrderIntervals = {};
 
+        activeOrders.sort((a, b) => {
+            const remainingTimeA = getRemainingTime(a);
+            const remainingTimeB = getRemainingTime(b);
+            return remainingTimeA - remainingTimeB;
+        });
+
         activeOrders.forEach(orderData => {
             const activeOrderItemElement = document.createElement('li');
             activeOrderItemElement.setAttribute('data-order-id', orderData.id);
-            const itemsSummary = orderData.items.map(item => `${item.name} x ${item.quantity}`).join(', ');
+            const total = orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const itemsSummary = `
+                <ol class="active-order-item-list">
+                    ${orderData.items.map(item => `<li>${item.name} x ${item.quantity}</li>`).join('')}
+                </ol>
+            `;
             
             let location = '';
             if (orderData.delivery) {
@@ -430,7 +448,11 @@ document.addEventListener('DOMContentLoaded', () => {
             activeOrderItemElement.innerHTML = `
                 <span><strong>Orden #${orderData.id}</strong> - ${new Date(orderData.date).toLocaleTimeString()}</span>
                 <span><strong>Cliente:</strong> ${orderData.lastName} - ${location} - <strong>Tel:</strong> ${orderData.phoneNumber || 'N/A'}</span>
-                <span>${itemsSummary}</span>
+                <div>${itemsSummary}</div>
+                <div class="order-summary">
+                    <strong>Total:</strong>
+                    <span>$${total.toFixed(2)}</span>
+                </div>
                 <div class="timer">Tiempo restante: <span class="countdown">--:--</span></div>
                 <div class="active-order-actions">
                     <button class="btn-edit-order" data-id="${orderData.id}">Editar</button>
@@ -441,7 +463,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const countdownElement = activeOrderItemElement.querySelector('.countdown');
             updateTimer(orderData, countdownElement);
-            activeOrderIntervals[orderData.id] = setInterval(() => updateTimer(orderData, countdownElement), 1000);
+            activeOrderIntervals[orderData.id] = setInterval(() => {
+                updateTimer(orderData, countdownElement);
+            }, 1000);
 
             activeOrderItemElement.querySelector('.btn-deliver-order').addEventListener('click', (e) => {
                 const orderId = e.target.getAttribute('data-id');
@@ -498,11 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     const updateTimer = (order, timerElement) => {
-        const now = Date.now();
-        const creationTime = order.creationTime;
-        const deliveryDuration = order.deliveryTime * 60 * 1000;
-        const elapsedTime = now - creationTime;
-        const remainingTime = deliveryDuration - elapsedTime;
+        const remainingTime = getRemainingTime(order);
 
         if (remainingTime <= 0) {
             timerElement.textContent = 'Retrasado';

@@ -42,6 +42,7 @@ header h2 {
 
 main {
     display: flex;
+    flex-direction: column;
     gap: 2rem;
     flex-wrap: wrap;
 }
@@ -300,7 +301,7 @@ h2 {
     margin: 0;
 }
 
-#active-orders-items li {
+#active-orders-items li[data-order-id] {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -316,10 +317,26 @@ h2 {
     margin-bottom: 0.5rem;
 }
 
+.active-order-item-list {
+    list-style: decimal;
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
+    width: 100%;
+}
+
+.active-order-item-list li {
+    font-size: 0.9rem;
+    padding: 0.2rem 0;
+    margin-bottom: 0.25rem;
+}
+
+
+
 .timer {
     font-weight: bold;
     color: #3498db;
     font-size: 1.1rem;
+    margin-top: 0.5rem;
 }
 
 .timer .delayed {
@@ -372,10 +389,6 @@ h2 {
 
 /* Media Queries */
 @media (max-width: 768px) {
-    main {
-        flex-direction: column;
-    }
-
     #app-container {
         padding: 1rem;
     }
