@@ -417,6 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         activeOrders.forEach(orderData => {
             const activeOrderItemElement = document.createElement('li');
+            activeOrderItemElement.setAttribute('data-order-id', orderData.id);
             const itemsSummary = orderData.items.map(item => `${item.name} x ${item.quantity}`).join(', ');
             
             let location = '';
@@ -431,8 +432,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span><strong>Cliente:</strong> ${orderData.lastName} - ${location} - <strong>Tel:</strong> ${orderData.phoneNumber || 'N/A'}</span>
                 <span>${itemsSummary}</span>
                 <div class="timer">Tiempo restante: <span class="countdown">--:--</span></div>
-                <button class="btn-edit-order" data-id="${orderData.id}">Editar</button>
-                <button class="btn-deliver-order" data-id="${orderData.id}">Entregar</button>
+                <div class="active-order-actions">
+                    <button class="btn-edit-order" data-id="${orderData.id}">Editar</button>
+                    <button class="btn-deliver-order" data-id="${orderData.id}">Entregar</button>
+                </div>
             `;
             activeOrdersItemsContainer.appendChild(activeOrderItemElement);
 
@@ -468,6 +471,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const editOrder = (orderId) => {
         const orderToEdit = activeOrders.find(o => o.id == orderId);
         if (orderToEdit) {
+            // Remove editing class from all other orders
+            document.querySelectorAll('#active-orders-items li').forEach(li => {
+                li.classList.remove('editing');
+            });
+
+            // Add editing class to the current order
+            const orderElement = document.querySelector(`[data-order-id="${orderId}"]`);
+            if (orderElement) {
+                orderElement.classList.add('editing');
+            }
+
             currentOrderId = orderToEdit.id;
             lastNameInput.value = orderToEdit.lastName;
             phoneNumberInput.value = orderToEdit.phoneNumber;
@@ -537,6 +551,9 @@ document.addEventListener('DOMContentLoaded', () => {
         addressInput.value = '';
         tableNumberSelect.value = '';
         renderOrder();
+        document.querySelectorAll('#active-orders-items li').forEach(li => {
+            li.classList.remove('editing');
+        });
     });
 
     payOrderBtn.addEventListener('click', () => {
@@ -608,6 +625,10 @@ document.addEventListener('DOMContentLoaded', () => {
         tableNumberGroup.style.display = 'block';
         payOrderBtn.textContent = 'Enviar Pedido';
         payOrderBtn.disabled = false;
+        
+        document.querySelectorAll('#active-orders-items li').forEach(li => {
+            li.classList.remove('editing');
+        });
     });
 
 

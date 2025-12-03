@@ -326,6 +326,13 @@ h2 {
     color: #e74c3c;
 }
 
+
+.active-order-actions {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+}
+
 .btn-edit-order,
 .btn-deliver-order {
     background-color: #2ecc71;
@@ -335,12 +342,25 @@ h2 {
     padding: 0.5rem 1rem;
     cursor: pointer;
     margin-top: 0.5rem;
-    margin-right: 0.5rem;
+    flex-grow: 1;
 }
+
+@media (max-width: 480px) {
+    .active-order-actions {
+        flex-direction: column;
+    }
+}
+
 
 .btn-edit-order {
     background-color: #f39c12;
 }
+
+#active-orders-items li.editing {
+    background-color: #fffbe6;
+    border-left: 5px solid #f39c12;
+}
+
 .order-status {
     font-style: italic;
     color: #2ecc71;
@@ -349,8 +369,13 @@ h2 {
 
 
 
+
 /* Media Queries */
 @media (max-width: 768px) {
+    main {
+        flex-direction: column;
+    }
+
     #app-container {
         padding: 1rem;
     }
