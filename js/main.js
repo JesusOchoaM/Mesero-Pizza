@@ -618,7 +618,7 @@ document.addEventListener('DOMContentLoaded', () => {
             delivery: isDelivery,
             address: isDelivery ? address : null,
             creationTime: Date.now(),
-            deliveryTime: Math.floor(Math.random() * (100 - 15 + 1)) + 15, // Random time between 15 and 100 minutes
+            deliveryTime: Math.floor(Math.random() * (45 - 10 + 1)) + 10, // Random time between 10 and 45 minutes, a more realistic range for preparation.
         };
 
         const existingOrderIndex = activeOrders.findIndex(o => o.id === currentOrderId);
