@@ -250,15 +250,38 @@ document.addEventListener('DOMContentLoaded', () => {
             { nombre: "Licuados (Fresa/Banano/Oreo)", desc: "Con leche", precio: 1.50 },
             { nombre: "Frozen (Café/Frutas)", desc: "Granizado", precio: 2.50 },
             // Postres
-            { nombre: "Crepa (Fresa/Banano/Mixta)", desc: "Dulce", precio: 3.50 },
             { nombre: "Mini Pan Cake", desc: "Postre", precio: 2.99 },
             { nombre: "Copa de Fruta", desc: "Miel o Yogurt", precio: 2.99 },
-            { nombre: "Pie de Limón / Chocolate", desc: "Porción", precio: 3.50 },
             { nombre: "Rollitos de Nutella", desc: "Con banano", precio: 3.50 }
         ]
     },
 
-    // 13. MENU DE CENAS
+    // 13. CREPAS Y POSTRES
+    {
+        categoria: "Crepas y Postres",
+        items: [
+            // --- CLÁSICAS ($3.50) ---
+            { nombre: "Banano Nutella", desc: "Clásica", precio: 3.50 },
+            { nombre: "Fresa Nutella", desc: "Clásica", precio: 3.50 },
+            { nombre: "Oreo Caramelo", desc: "Toque dulce", precio: 3.50 },
+            { nombre: "Oreo Nutella", desc: "Toque dulce", precio: 3.50 },
+            
+            // --- COMBINACIONES ($3.99) ---
+            { nombre: "Fresa, Banano, Nutella", desc: "Combinación frutal", precio: 3.99 },
+            { nombre: "Fresa, Banano, Caramelo", desc: "Combinación frutal", precio: 3.99 },
+            { nombre: "Oreo, Fresa, Caramelo", desc: "Combinación especial", precio: 3.99 },
+            { nombre: "Oreo, Fresa, Nutella", desc: "Combinación especial", precio: 3.99 },
+
+            // --- SIMPLES ($2.50) ---
+            { nombre: "Crepa Nutella (Simple)", desc: "Crepa básica solo con topping", precio: 2.50 },
+            { nombre: "Crepa Caramelo (Simple)", desc: "Crepa básica solo con topping", precio: 2.50 },
+
+            // --- MIXTA ($4.49) ---
+            { nombre: "Mixta Especial", desc: "Oreo, banano, fresa, granola y Chantilly", precio: 4.49 }
+        ]
+    },
+
+    // 14. MENU DE CENAS
     {
         categoria: "Cenas Típicas",
         descripcion: "Servidas de 5:00 PM en adelante",
@@ -296,7 +319,21 @@ document.addEventListener('DOMContentLoaded', () => {
             category.items.forEach(item => {
                 const menuItemElement = document.createElement('div');
                 menuItemElement.classList.add('menu-item');
-                
+
+                const hasSubOptions = item.nombre.includes('/');
+                const subOptions = hasSubOptions ? item.nombre.split(' / ') : [item.nombre];
+                const baseName = hasSubOptions ? '' : item.nombre;
+
+                let subOptionsHTML = '';
+                if (hasSubOptions) {
+                    const subOptionSelectId = `sub-option-select-${item.nombre.replace(/\s+/g, '-')}`;
+                    subOptionsHTML = `<select id="${subOptionSelectId}" class="sub-option-select">`;
+                    subOptions.forEach(option => {
+                        subOptionsHTML += `<option value="${option}">${option}</option>`;
+                    });
+                    subOptionsHTML += `</select>`;
+                }
+
                 let priceHTML = '';
                 if (item.precios) {
                     const selectId = `price-select-${item.nombre.replace(/\s+/g, '-')}`;
@@ -314,6 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="menu-item-details">
                         <h4>${item.nombre}</h4>
                         <p class="item-description">${item.desc || ''}</p>
+                        ${subOptionsHTML}
                         ${priceHTML.includes('<select') ? '' : priceHTML}
                     </div>
                     <div class="menu-item-actions">
@@ -323,15 +361,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
 
                 menuItemElement.querySelector('.btn-add-item').addEventListener('click', () => {
+                    let name = item.nombre;
+                    let price = 0;
+
+                    if (hasSubOptions) {
+                        const subOptionSelect = menuItemElement.querySelector('.sub-option-select');
+                        name = subOptionSelect.value;
+                    }
+
                     if (item.precios) {
                         const select = menuItemElement.querySelector('.price-select');
                         const selectedOption = select.options[select.selectedIndex];
-                        const price = parseFloat(selectedOption.value);
-                        const name = `${item.nombre} (${selectedOption.text.split(' - ')[0]})`;
-                        addItemToOrder({ name, price });
+                        price = parseFloat(selectedOption.value);
+                        const nameSuffix = selectedOption.text.split(' - ')[0];
+                        name = `${name} (${nameSuffix})`;
+
                     } else if (item.precio) {
-                        addItemToOrder({ name: item.nombre, price: item.precio });
+                        price = item.precio;
                     }
+                    
+                    addItemToOrder({ name, price });
                 });
                 itemsContainer.appendChild(menuItemElement);
             });

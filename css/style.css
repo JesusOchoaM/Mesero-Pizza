@@ -273,7 +273,8 @@ h2 {
     margin-top: 1rem;
 }
 
-.price-select {
+.price-select,
+.sub-option-select {
     width: 100%;
     padding: 0.5rem;
     border: 1px solid var(--card-border);
