@@ -6,7 +6,7 @@
     <title>Just Great Pizza - Toma de Pedidos</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body>  
     <div id="app-container">
         <header>
             <h1>Just Great Pizza</h1>
@@ -20,8 +20,18 @@
                     <input type="text" id="last-name" name="last-name" required>
                 </div>
                 <div class="form-group">
+                    <label for="phone-number">Teléfono:</label>
+                    <input type="tel" id="phone-number" name="phone-number">
+                </div>
+                <div class="form-group">
+                    <label for="delivery-option">
+                        <input type="checkbox" id="delivery-option" name="delivery-option">
+                        Para llevar (Delivery)
+                    </label>
+                </div>
+                <div class="form-group" id="table-number-group">
                     <label for="table-number">Mesa:</label>
-                    <select id="table-number" name="table-number" required>
+                    <select id="table-number" name="table-number">
                         <option value="">Seleccione una mesa</option>
                         <option value="1">Mesa 1</option>
                         <option value="2">Mesa 2</option>
@@ -36,6 +46,10 @@
                         <option value="11">Mesa 11</option>
                         <option value="12">Mesa 12</option>
                     </select>
+                </div>
+                <div class="form-group" id="address-group" style="display: none;">
+                    <label for="address">Dirección:</label>
+                    <input type="text" id="address" name="address">
                 </div>
             </section>
             <section id="menu">
@@ -69,6 +83,13 @@
                 <button id="pay-order-btn" class="btn-primary">Enviar Pedido</button>
             </aside>
         </main>
+    <section id="active-orders">
+        <h2>Pedidos Activos</h2>
+        <ul id="active-orders-items">
+            <!-- Active order items will be injected here -->
+        </ul>
+        <button id="clear-active-orders-btn" class="btn-secondary">Limpiar Pedidos Activos</button>
+    </section>
     <section id="order-history">
         <h2>Historial de Pedidos</h2>
         <ul id="order-history-items">

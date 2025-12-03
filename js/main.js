@@ -8,13 +8,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearHistoryBtn = document.getElementById('clear-history-btn');
     const lastNameInput = document.getElementById('last-name');
     const tableNumberSelect = document.getElementById('table-number');
+    const phoneNumberInput = document.getElementById('phone-number');
     const extraItemNameInput = document.getElementById('extra-item-name');
     const extraItemPriceInput = document.getElementById('extra-item-price');
     const addExtraItemBtn = document.getElementById('add-extra-item-btn');
+    const activeOrdersItemsContainer = document.getElementById('active-orders-items');
+    const clearActiveOrdersBtn = document.getElementById('clear-active-orders-btn');
+    const deliveryOption = document.getElementById('delivery-option');
+    const addressGroup = document.getElementById('address-group');
+    const tableNumberGroup = document.getElementById('table-number-group');
+    const addressInput = document.getElementById('address');
 
     let order = [];
     let orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
-    let historyIntervals = [];
+    let activeOrders = JSON.parse(localStorage.getItem('activeOrders')) || [];
+    let activeOrderIntervals = {};
+    let currentOrderId = null;
+
+    deliveryOption.addEventListener('change', () => {
+        addressGroup.style.display = deliveryOption.checked ? 'block' : 'none';
+        tableNumberGroup.style.display = deliveryOption.checked ? 'none' : 'block';
+    });
 
     const menu = [
     // 1. ENTRADAS
@@ -372,53 +386,120 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderOrderHistory = () => {
-        historyIntervals.forEach(clearInterval);
-        historyIntervals = [];
         orderHistoryItemsContainer.innerHTML = '';
         orderHistory.forEach(orderData => {
             const orderHistoryItemElement = document.createElement('li');
             const total = orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const itemsSummary = orderData.items.map(item => `${item.name} x ${item.quantity}`).join(', ');
-            const timerSpan = document.createElement('span');
-
-            const endTime = orderData.creationTime + orderData.deliveryTime * 60 * 1000;
-
-            const intervalId = setInterval(() => {
-                const now = new Date().getTime();
-                const distance = endTime - now;
-                
-                if (distance < 0) {
-                    clearInterval(intervalId);
-                    timerSpan.innerHTML = "¡Pedido entregado!";
-                    return;
-                }
-
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                timerSpan.innerHTML = `Tiempo restante: ${minutes}m ${seconds}s`;
-            }, 1000);
-
-            historyIntervals.push(intervalId);
+            
+            let location = '';
+            if (orderData.delivery) {
+                location = `<strong>Dirección:</strong> ${orderData.address}`;
+            } else {
+                location = `<strong>Mesa:</strong> ${orderData.tableNumber}`;
+            }
 
             orderHistoryItemElement.innerHTML = `
                 <span><strong>Orden #${orderData.id}</strong> - ${new Date(orderData.date).toLocaleString()}</span>
-                <span><strong>Cliente:</strong> ${orderData.lastName} - <strong>Mesa:</strong> ${orderData.tableNumber}</span>
+                <span><strong>Cliente:</strong> ${orderData.lastName} - ${location} - <strong>Tel:</strong> ${orderData.phoneNumber || 'N/A'}</span>
                 <span>${itemsSummary}</span>
-                <span>Total a Pagar: $${total.toFixed(2)}</span>
+                <span>Total Pagado: $${total.toFixed(2)}</span>
+                <span class="order-status">Entregado</span>
             `;
-            orderHistoryItemElement.appendChild(timerSpan);
-            const payButton = document.createElement('button');
-            payButton.className = 'btn-pay-history';
-            payButton.textContent = 'Pagar';
-            payButton.dataset.id = orderData.id;
-            payButton.addEventListener('click', (e) => {
-                const orderId = e.target.getAttribute('data-id');
-                alert(`Orden #${orderId} pagada.`);
-            });
-            orderHistoryItemElement.appendChild(payButton);
             orderHistoryItemsContainer.appendChild(orderHistoryItemElement);
         });
     };
+
+    const renderActiveOrders = () => {
+        activeOrdersItemsContainer.innerHTML = '';
+        Object.values(activeOrderIntervals).forEach(clearInterval);
+        activeOrderIntervals = {};
+
+        activeOrders.forEach(orderData => {
+            const activeOrderItemElement = document.createElement('li');
+            const itemsSummary = orderData.items.map(item => `${item.name} x ${item.quantity}`).join(', ');
+            
+            let location = '';
+            if (orderData.delivery) {
+                location = `<strong>Dirección:</strong> ${orderData.address}`;
+            } else {
+                location = `<strong>Mesa:</strong> ${orderData.tableNumber}`;
+            }
+
+            activeOrderItemElement.innerHTML = `
+                <span><strong>Orden #${orderData.id}</strong> - ${new Date(orderData.date).toLocaleTimeString()}</span>
+                <span><strong>Cliente:</strong> ${orderData.lastName} - ${location} - <strong>Tel:</strong> ${orderData.phoneNumber || 'N/A'}</span>
+                <span>${itemsSummary}</span>
+                <div class="timer">Tiempo restante: <span class="countdown">--:--</span></div>
+                <button class="btn-edit-order" data-id="${orderData.id}">Editar</button>
+                <button class="btn-deliver-order" data-id="${orderData.id}">Entregar</button>
+            `;
+            activeOrdersItemsContainer.appendChild(activeOrderItemElement);
+
+            const countdownElement = activeOrderItemElement.querySelector('.countdown');
+            updateTimer(orderData, countdownElement);
+            activeOrderIntervals[orderData.id] = setInterval(() => updateTimer(orderData, countdownElement), 1000);
+
+            activeOrderItemElement.querySelector('.btn-deliver-order').addEventListener('click', (e) => {
+                const orderId = e.target.getAttribute('data-id');
+                deliverOrder(orderId);
+            });
+            activeOrderItemElement.querySelector('.btn-edit-order').addEventListener('click', (e) => {
+                const orderId = e.target.getAttribute('data-id');
+                editOrder(orderId);
+            });
+        });
+    };
+
+    const deliverOrder = (orderId) => {
+        const orderIndex = activeOrders.findIndex(o => o.id == orderId);
+        if (orderIndex > -1) {
+            const deliveredOrder = activeOrders.splice(orderIndex, 1)[0];
+            orderHistory.unshift(deliveredOrder);
+            localStorage.setItem('activeOrders', JSON.stringify(activeOrders));
+            localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+            renderActiveOrders();
+            renderOrderHistory();
+            clearInterval(activeOrderIntervals[orderId]);
+            delete activeOrderIntervals[orderId];
+        }
+    };
+    
+    const editOrder = (orderId) => {
+        const orderToEdit = activeOrders.find(o => o.id == orderId);
+        if (orderToEdit) {
+            currentOrderId = orderToEdit.id;
+            lastNameInput.value = orderToEdit.lastName;
+            phoneNumberInput.value = orderToEdit.phoneNumber;
+            deliveryOption.checked = orderToEdit.delivery;
+            addressGroup.style.display = orderToEdit.delivery ? 'block' : 'none';
+            tableNumberGroup.style.display = orderToEdit.delivery ? 'none' : 'block';
+            addressInput.value = orderToEdit.address || '';
+            tableNumberSelect.value = orderToEdit.tableNumber || '';
+            order = JSON.parse(JSON.stringify(orderToEdit.items)); // Deep copy
+            renderOrder();
+            window.scrollTo(0, 0);
+        }
+    };
+
+
+    const updateTimer = (order, timerElement) => {
+        const now = Date.now();
+        const creationTime = order.creationTime;
+        const deliveryDuration = order.deliveryTime * 60 * 1000;
+        const elapsedTime = now - creationTime;
+        const remainingTime = deliveryDuration - elapsedTime;
+
+        if (remainingTime <= 0) {
+            timerElement.textContent = 'Retrasado';
+            timerElement.parentElement.classList.add('delayed');
+        } else {
+            const minutes = Math.floor(remainingTime / (1000 * 60));
+            const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+    };
+
 
     const addItemToOrder = (item) => {
         const existingItem = order.find(orderItem => orderItem.name === item.name);
@@ -449,51 +530,109 @@ document.addEventListener('DOMContentLoaded', () => {
 
     resetOrderBtn.addEventListener('click', () => {
         order = [];
+        currentOrderId = null;
+        lastNameInput.value = '';
+        phoneNumberInput.value = '';
+        deliveryOption.checked = false;
+        addressInput.value = '';
+        tableNumberSelect.value = '';
         renderOrder();
     });
 
     payOrderBtn.addEventListener('click', () => {
         const lastName = lastNameInput.value.trim();
         const tableNumber = tableNumberSelect.value;
+        const phoneNumber = phoneNumberInput.value.trim();
+        const isDelivery = deliveryOption.checked;
+        const address = addressInput.value.trim();
+        const total = order.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-        if (!lastName || !tableNumber) {
-            alert('Por favor, ingrese el apellido y seleccione una mesa.');
+        if (!lastName) {
+            alert('Por favor, ingrese el apellido.');
             return;
         }
 
-        const deliveryTime = Math.floor(Math.random() * (60 - 15 + 1)) + 15;
-        const newOrder = {
-            id: Date.now(),
-            date: new Date(),
-            creationTime: Date.now(),
-            items: order,
-            deliveryTime: deliveryTime,
-            lastName: lastName,
-            tableNumber: tableNumber
-        };
-        orderHistory.push(newOrder);
-        localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
-        
-        alert(`¡Gracias por tu pedido, ${lastName}! Tu pedido para la mesa ${tableNumber} llegará en ${deliveryTime} minutos.`);
-        
-        order = [];
-        renderOrder();
-        renderOrderHistory();
+        if (isDelivery && !address) {
+            alert('Por favor, ingrese la dirección de entrega.');
+            return;
+        }
 
-        // Clear customer info
+        if (!isDelivery && !tableNumber) {
+            alert('Por favor, seleccione una mesa.');
+            return;
+        }
+
+        if (order.length === 0) {
+            alert('No hay items en el pedido.');
+            return;
+        }
+
+        payOrderBtn.disabled = true;
+        payOrderBtn.textContent = 'Enviando...';
+
+        const orderData = {
+            id: currentOrderId || Date.now(),
+            date: new Date().toISOString(),
+            items: order,
+            lastName: lastName,
+            tableNumber: isDelivery ? null : tableNumber,
+            phoneNumber: phoneNumber,
+            total: total.toFixed(2),
+            delivery: isDelivery,
+            address: isDelivery ? address : null,
+            creationTime: Date.now(),
+            deliveryTime: Math.floor(Math.random() * (100 - 15 + 1)) + 15, // Random time between 15 and 100 minutes
+        };
+
+        const existingOrderIndex = activeOrders.findIndex(o => o.id === currentOrderId);
+        if (existingOrderIndex > -1) {
+            activeOrders[existingOrderIndex] = orderData;
+        } else {
+            activeOrders.push(orderData);
+        }
+        localStorage.setItem('activeOrders', JSON.stringify(activeOrders));
+
+        alert(`¡Gracias por tu pedido, ${lastName}! Tu pedido se está procesando.`);
+
+        order = [];
+        currentOrderId = null;
+        renderOrder();
+        renderActiveOrders();
+
         lastNameInput.value = '';
         tableNumberSelect.value = '';
+        phoneNumberInput.value = '';
+        addressInput.value = '';
+        deliveryOption.checked = false;
+        addressGroup.style.display = 'none';
+        tableNumberGroup.style.display = 'block';
+        payOrderBtn.textContent = 'Enviar Pedido';
+        payOrderBtn.disabled = false;
     });
 
+
     clearHistoryBtn.addEventListener('click', () => {
-        orderHistory = [];
-        localStorage.removeItem('orderHistory');
-        renderOrderHistory();
+        if (confirm('¿Estás seguro de que quieres borrar todo el historial?')) {
+            orderHistory = [];
+            localStorage.removeItem('orderHistory');
+            renderOrderHistory();
+        }
+    });
+
+    clearActiveOrdersBtn.addEventListener('click', () => {
+        if (confirm('¿Estás seguro de que quieres limpiar todos los pedidos activos?')) {
+            activeOrders = [];
+            localStorage.removeItem('activeOrders');
+            Object.values(activeOrderIntervals).forEach(clearInterval);
+            activeOrderIntervals = {};
+            renderActiveOrders();
+        }
     });
 
     addExtraItemBtn.addEventListener('click', () => {
         const name = extraItemNameInput.value.trim();
         const price = parseFloat(extraItemPriceInput.value);
+
 
         if (!name || isNaN(price) || price <= 0) {
             alert('Por favor, ingrese un nombre y un precio válido para el extra.');
@@ -509,4 +648,5 @@ document.addEventListener('DOMContentLoaded', () => {
     renderMenu();
     renderOrder();
     renderOrderHistory();
+    renderActiveOrders();
 });

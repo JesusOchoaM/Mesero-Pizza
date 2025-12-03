@@ -280,11 +280,81 @@ h2 {
     margin-bottom: 0.5rem;
 }
 
+
+#address-group {
+    display: none;
+}
+
+
+#active-orders, #order-history {
+    background-color: var(--secondary-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    margin-top: 2rem;
+}
+
+#active-orders-items, #order-history-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#active-orders-items li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    border-bottom: 1px solid var(--card-border);
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+#active-orders-items li > span,
+#active-orders-items li > div {
+    margin-bottom: 0.5rem;
+}
+
+.timer {
+    font-weight: bold;
+    color: #3498db;
+    font-size: 1.1rem;
+}
+
+.timer .delayed {
+    color: #e74c3c;
+}
+
+.btn-edit-order,
+.btn-deliver-order {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+.btn-edit-order {
+    background-color: #f39c12;
+}
+.order-status {
+    font-style: italic;
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+
+
 /* Media Queries */
 @media (max-width: 768px) {
     #app-container {
         padding: 1rem;
     }
+
 
     header h1 {
         font-size: 2rem;
