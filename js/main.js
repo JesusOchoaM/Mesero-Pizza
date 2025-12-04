@@ -52,13 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
         descripcion: "Tamaños: Peq (4 porc) | Med (8 porc) | Fam (12 porc)",
         items: [
             // Calzones
-            { nombre: "Calzone Jamón / Pepperoni", desc: "Masa cerrada rellena", precio: 8.00 },
+            { nombre: "Calzone de Jamón / Calzone de Pepperoni", desc: "Masa cerrada rellena", precio: 8.00 },
             { nombre: "Calzone Suprema", desc: "Relleno especial", precio: 9.50 },
             { nombre: "Calzone Doble Queso", desc: "Full queso", precio: 9.50 },
             { nombre: "Calzone Vegetariana", desc: "Vegetales frescos", precio: 9.50 },
             // Pizzas Tradicionales
             { nombre: "Pepperoni / Jamón", desc: "Clásica", precios: { peq: 5.00, med: 6.00, fam: 7.99 } },
-            { nombre: "Cebolla / Tomate / Chile", desc: "Con Jamón o Pepperoni", precios: { peq: 5.50, med: 6.99, fam: 8.99 } },
+            { nombre: "Pizza con Jamón y Vegetales / Pizza con Pepperoni y Vegetales", desc: "Cebolla, Tomate, Chile", precios: { peq: 5.50, med: 6.99, fam: 8.99 } },
             { nombre: "Salchicha / Chorizo", desc: "Con Jamón o Pepperoni", precios: { peq: 6.00, med: 7.50, fam: 9.75 } },
             { nombre: "Mitad y Mitad", desc: "Jamón y Pepperoni", precios: { peq: 6.00, med: 7.99, fam: 9.99 } },
             { nombre: "Jalapeño / Loroco", desc: "Especialidades", precios: { peq: 7.00, med: 8.50, fam: 10.99 } },
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { nombre: "Hawaiana", desc: "Jamón y Piña", precios: { peq: 7.00, med: 8.99, fam: 12.99 } },
             { nombre: "Meat Lover", desc: "Todas las carnes", precios: { peq: 7.00, med: 8.99, fam: 12.99 } },
             { nombre: "Doble Queso", desc: "Mozzarella extra", precios: { peq: 6.50, med: 8.99, fam: 10.99 } },
-            { nombre: "Alfredo Pollo y Camarones", desc: "Salsa blanca", precios: { peq: 9.50, med: 14.99, fam: 19.99 } },
+            { nombre: "Pizza Alfredo con Pollo / Pizza Alfredo con Camarones", desc: "Salsa blanca", precios: { peq: 9.50, med: 14.99, fam: 19.99 } },
             { nombre: "Carnívora", desc: "5 Carnes y vegetales", precios: { peq: 8.00, med: 10.99, fam: 16.99 } },
             { nombre: "4 Estaciones", desc: "Jamón, Pepperoni, Suprema y Carne", precios: { peq: 8.00, med: 10.99, fam: 14.99 } },
             { nombre: "Orilla de Queso (Extra)", desc: "Agrégalo a tu orden", precios: { peq: 2.75, med: 3.99, fam: 5.50 } }
@@ -80,8 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
         items: [
             { 
                 nombre: "Combo Familiar $19.99", 
-                desc: "1 Pizza Gigante (Jamón o Peperoni) + 1 Orden Pan con Ajo + 10 Alitas (BBQ o Búfalo) + 1 Soda (1 Litro) + 1 Orden Papas Francesas. (Cambio a Suprema +$1.99)", 
-                precio: 19.99 
+                desc: "1 Pizza Gigante + 1 Orden Pan con Ajo + 10 Alitas + 1 Soda (1 Litro) + 1 Orden Papas Francesas. (Cambio a Suprema +$1.99)", 
+                precio: 19.99,
+                options: [
+                    { name: "Pizza", choices: ["Jamón", "Pepperoni"] },
+                    { name: "Alitas", choices: ["BBQ", "Búfalo"] }
+                ]
             }
         ]
     },
@@ -111,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { nombre: "Queso", desc: "Puro queso", precio: 1.00 },
             { nombre: "Queso con Loroco", desc: "Especialidad", precio: 1.25 },
             { nombre: "Queso Jalapeño", desc: "Picante", precio: 1.15 },
-            { nombre: "Queso Pepperoni / Jamón", desc: "Especialidad", precio: 1.35 },
+            { nombre: "Pupusa de Queso con Pepperoni / Pupusa de Queso con Jamón", desc: "Especialidad", precio: 1.35 },
             { nombre: "Queso Ayote / Ajo", desc: "Vegetariana", precio: 1.25 },
             { nombre: "Chicharrón", desc: "Solo carne", precio: 1.50 },
             { nombre: "Queso con Pollo", desc: "Especialidad", precio: 1.50 },
@@ -126,9 +130,9 @@ document.addEventListener('DOMContentLoaded', () => {
         categoria: "Zona de Fritura",
         descripcion: "Alitas y Snacks",
         items: [
-            { nombre: "Alitas Pequeño (7)", desc: "BBQ/Buf, Papa, Aderezo", precio: 6.99 },
-            { nombre: "Alitas Mediano (20)", desc: "BBQ/Buf, Papa, Aderezo", precio: 16.99 },
-            { nombre: "Alitas Grande (30)", desc: "BBQ/Buf, Papa, Aderezo", precio: 22.99 },
+            { nombre: "Alitas Pequeño (7) BBQ / Alitas Pequeño (7) Búfalo", desc: "Papa, Aderezo", precio: 6.99 },
+            { nombre: "Alitas Mediano (20) BBQ / Alitas Mediano (20) Búfalo", desc: "Papa, Aderezo", precio: 16.99 },
+            { nombre: "Alitas Grande (30) BBQ / Alitas Grande (30) Búfalo", desc: "Papa, Aderezo", precio: 22.99 },
             { nombre: "Camarones Empanizados", desc: "12 camarones, papas, tortilla", precio: 10.99 },
             { nombre: "Tacos de Pollo", desc: "5 tacos, papas, tortilla", precio: 7.99 },
             { nombre: "Plato de Costilla", desc: "8onz costilla cerdo, papa, ensalada", precio: 8.99 },
@@ -219,10 +223,10 @@ document.addEventListener('DOMContentLoaded', () => {
         categoria: "Menú Infantil ($4.99)",
         descripcion: "Incluye Papas, Aderezo y Soda",
         items: [
-            { nombre: "Infantil Alitas", desc: "4 Alitas BBQ/Buf", precio: 4.99 },
+            { nombre: "Infantil Alitas BBQ / Infantil Alitas Búfalo", desc: "4 Alitas", precio: 4.99 },
             { nombre: "Infantil Pechugitas", desc: "4 Pechugitas", precio: 4.99 },
             { nombre: "Infantil Hamburguesa", desc: "Hamburguesa de Pollo", precio: 4.99 },
-            { nombre: "Infantil Pizza", desc: "Pizza 4 porciones (Jamón/Pep) + 2 Pan ajo", precio: 4.99 },
+            { nombre: "Infantil Pizza de Jamón / Infantil Pizza de Pepperoni", desc: "Pizza 4 porciones + 2 Pan ajo", precio: 4.99 },
             { nombre: "Infantil Nuggets", desc: "5 Nuggets", precio: 4.99 },
             { nombre: "Infantil Rellenita", desc: "1 Rellenita Tradicional", precio: 4.99 }
         ]
@@ -236,22 +240,22 @@ document.addEventListener('DOMContentLoaded', () => {
             { nombre: "Coca Cola / Sabores Lata", desc: "Bebida fría", precio: 1.25 },
             { nombre: "Pepsi 1.25L", desc: "Botella", precio: 1.75 },
             { nombre: "Agua Botella", desc: "Natural", precio: 0.75 },
-            { nombre: "Refrescos Naturales", desc: "Horchata, Cebada, Sandía, Fresa, Piña", precio: 1.75 },
+            { nombre: "Refresco Natural de Horchata / Cebada / Sandía / Fresa / Piña", desc: "Refresco Natural", precio: 1.75 },
             { nombre: "Jugo de Naranja", desc: "Natural", precio: 1.99 },
             // Calientes
             { nombre: "Café Negro / Té", desc: "Caliente", precio: 1.00 },
             { nombre: "Café con Leche", desc: "Caliente", precio: 1.50 },
             // Alcohol
-            { nombre: "Cerveza (Pilsener/Golden)", desc: "Botella", precio: 1.75 },
+            { nombre: "Cerveza Pilsener / Cerveza Golden", desc: "Botella", precio: 1.75 },
             { nombre: "Mix Michelada", desc: "Preparado", precio: 1.50 },
-            { nombre: "Cocteles (Tequila/Ron/Vodka)", desc: "Variedad", precio: 3.50 },
+            { nombre: "Coctel de Tequila / Coctel de Ron / Coctel de Vodka", desc: "Variedad", precio: 3.50 },
             // Especiales
-            { nombre: "Limonada (Natural/Fresa/Hierba)", desc: "Preparada", precio: 3.50 },
-            { nombre: "Licuados (Fresa/Banano/Oreo)", desc: "Con leche", precio: 1.50 },
-            { nombre: "Frozen (Café/Frutas)", desc: "Granizado", precio: 2.50 },
+            { nombre: "Limonada Natural / Limonada de Fresa / Limonada de Hierbabuena", desc: "Preparada", precio: 3.50 },
+            { nombre: "Licuado de Fresa / Licuado de Banano / Licuado de Oreo", desc: "Con leche", precio: 1.50 },
+            { nombre: "Frozen de Café / Frozen de Frutas", desc: "Granizado", precio: 2.50 },
             // Postres
             { nombre: "Mini Pan Cake", desc: "Postre", precio: 2.99 },
-            { nombre: "Copa de Fruta", desc: "Miel o Yogurt", precio: 2.99 },
+            { nombre: "Copa de Fruta con Miel / Copa de Fruta con Yogurt", desc: "Miel o Yogurt", precio: 2.99 },
             { nombre: "Rollitos de Nutella", desc: "Con banano", precio: 3.50 }
         ]
     },
@@ -286,13 +290,29 @@ document.addEventListener('DOMContentLoaded', () => {
         categoria: "Cenas Típicas",
         descripcion: "Servidas de 5:00 PM en adelante",
         items: [
-            { nombre: "Cena Tradicional", desc: "2 Huevos, frijoles, plátano, pan, café", precio: 3.50 },
-            { nombre: "Cena Ranchera", desc: "Huevos, frijoles, plátano, chorizo, tocino", precio: 4.25 },
-            { nombre: "Omelette", desc: "Con jamón y queso", precio: 4.50 },
+            { nombre: "Cena Tradicional con Huevos Revueltos / Cena Tradicional con Huevos Picados / Cena Tradicional con Huevos con Vegetales", desc: "2 Huevos, frijoles, plátano, pan, café", precio: 3.50 },
+            { nombre: "Cena Ranchera con Huevos Revueltos / Cena Ranchera con Huevos Picados / Cena Ranchera con Huevos con Vegetales", desc: "Huevos, frijoles, plátano, chorizo, tocino", precio: 4.25 },
+            { nombre: "Omelette con jamón y queso / Omelette con vegetales", desc: "Con jamón y queso", precio: 4.50 },
             { nombre: "Pan Cakes", desc: "Con Nutella, miel, banano", precio: 3.99 },
-            { nombre: "Cena Americana", desc: "Huevos, pancake, frijoles, chorizo", precio: 5.25 },
-            { nombre: "Cena de Toque", desc: "Huevos, frijoles, 3 alitas", precio: 4.99 },
-            { nombre: "Burrito Cena", desc: "Huevos, frijoles, queso", precio: 4.50 }
+            { nombre: "Cena Americana con Huevos Revueltos / Cena Americana con Huevos Picados / Cena Americana con Huevos con Vegetales", desc: "Huevos, pancake, frijoles, chorizo", precio: 5.25 },
+            { nombre: "Cena de Toque con Huevos Revueltos / Cena de Toque con Huevos Picados / Cena de Toque con Huevos con Vegetales", desc: "Huevos, frijoles, 3 alitas", precio: 4.99 },
+            { nombre: "Burrito Cena con Huevos Revueltos / Burrito Cena con Huevos Picados / Burrito Cena con Huevos con Vegetales", desc: "Huevos, frijoles, queso", precio: 4.50 }
+        ]
+    },
+
+    // 15. EXTRAS
+    {
+        categoria: "Extras",
+        items: [
+            { nombre: "Queso", desc: "Adicional", precio: 0.75 },
+            { nombre: "Frijoles Molidos", desc: "Adicional", precio: 0.75 },
+            { nombre: "Plátanos Fritos", desc: "Adicional", precio: 0.75 },
+            { nombre: "Pan Francés", desc: "Adicional", precio: 0.20 },
+            { nombre: "Tortilla Frita", desc: "Adicional", precio: 0.75 },
+            { nombre: "Tocino", desc: "Adicional", precio: 0.99 },
+            { nombre: "Salchicha", desc: "Adicional", precio: 0.75 },
+            { nombre: "Chorizo", desc: "Adicional", precio: 0.75 },
+            { nombre: "Crema", desc: "Adicional", precio: 0.75 }
         ]
     }
 ];
@@ -322,10 +342,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const hasSubOptions = item.nombre.includes('/');
                 const subOptions = hasSubOptions ? item.nombre.split(' / ') : [item.nombre];
-                const baseName = hasSubOptions ? '' : item.nombre;
 
                 let subOptionsHTML = '';
-                if (hasSubOptions) {
+                if (item.options) {
+                    item.options.forEach(option => {
+                        const optionSelectId = `option-select-${item.nombre.replace(/\s+/g, '-')}-${option.name.replace(/\s+/g, '-')}`;
+                        subOptionsHTML += `<label for="${optionSelectId}">${option.name}:</label>`;
+                        subOptionsHTML += `<select id="${optionSelectId}" class="sub-option-select">`;
+                        option.choices.forEach(choice => {
+                            subOptionsHTML += `<option value="${choice}">${choice}</option>`;
+                        });
+                        subOptionsHTML += `</select>`;
+                    });
+                } else if (hasSubOptions) {
                     const subOptionSelectId = `sub-option-select-${item.nombre.replace(/\s+/g, '-')}`;
                     subOptionsHTML = `<select id="${subOptionSelectId}" class="sub-option-select">`;
                     subOptions.forEach(option => {
@@ -363,8 +392,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 menuItemElement.querySelector('.btn-add-item').addEventListener('click', () => {
                     let name = item.nombre;
                     let price = 0;
+                    let optionsSummary = '';
 
-                    if (hasSubOptions) {
+                    if (item.options) {
+                        const selectedOptions = [];
+                        item.options.forEach(option => {
+                            const optionSelectId = `option-select-${item.nombre.replace(/\s+/g, '-')}-${option.name.replace(/\s+/g, '-')}`;
+                            const select = menuItemElement.querySelector(`#${optionSelectId}`);
+                            selectedOptions.push(`${option.name}: ${select.value}`);
+                        });
+                        optionsSummary = ` (${selectedOptions.join(', ')})`;
+                        name = `${item.nombre}${optionsSummary}`;
+                    } else if (hasSubOptions) {
                         const subOptionSelect = menuItemElement.querySelector('.sub-option-select');
                         name = subOptionSelect.value;
                     }
@@ -374,7 +413,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         const selectedOption = select.options[select.selectedIndex];
                         price = parseFloat(selectedOption.value);
                         const nameSuffix = selectedOption.text.split(' - ')[0];
-                        name = `${name} (${nameSuffix})`;
+                        if (item.options) {
+                             name = `${item.nombre} (${nameSuffix})${optionsSummary}`;
+                        } else {
+                             name = `${name} (${nameSuffix})`;
+                        }
 
                     } else if (item.precio) {
                         price = item.precio;
