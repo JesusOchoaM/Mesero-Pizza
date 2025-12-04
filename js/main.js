@@ -94,15 +94,60 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         categoria: "Combos Familiares",
         items: [
-            { nombre: "Combo Pequeño", desc: "1 Pizza (1 ing), Pan c/ajo (6), Soda 1.25L", precio: 13.49 },
-            { nombre: "Combo Mediano", desc: "2 Pizzas (1 ing), Pan c/ajo (6), Soda 1.25L", precio: 21.99 },
-            { nombre: "Combo Grande", desc: "1 Pizza (1 ing), 20 Alitas, 2 Papas, Soda 1.25L", precio: 26.99 },
-            { nombre: "Combo Especial", desc: "1 Gigante Especialidad, 8 Alitas, Papas, Pan/Ajo, Ketchup", precio: 22.99 },
-            { nombre: "Combo Combinado", desc: "1 Pizza 1 ing, 10 Alitas, Papas, Ketchup", precio: 16.99 },
-            { nombre: "Combo XL", desc: "1 Gigante Esp, Pan ajo, 5 Piezas Pollo, Soda 1.25L", precio: 27.49 },
-            { nombre: "Combo #1", desc: "2 Gigantes Especialidad + Pan con ajo", precio: 23.49 },
-            { nombre: "Combo #2", desc: "1 Pizza (1 ing), 10 Alitas, Papas, CheeseStick", precio: 22.99 },
-            { nombre: "Combo #3", desc: "3 Gigantes (1 Esp, 2 Un Ing), 10 Alitas, Papas", precio: 38.99 }
+            { nombre: "Combo Pequeño", desc: "1 Pizza (1 ing), Pan c/ajo (6), Soda 1.25L", precio: 13.49,
+                options: [
+                    { name: "Pizza", choices: ["Jamón", "Pepperoni", "Queso"] }
+                ]
+            },
+            { nombre: "Combo Mediano", desc: "2 Pizzas (1 ing), Pan c/ajo (6), Soda 1.25L", precio: 21.99,
+                options: [
+                    { name: "Pizza 1", choices: ["Jamón", "Pepperoni", "Queso"] },
+                    { name: "Pizza 2", choices: ["Jamón", "Pepperoni", "Queso"] }
+                ]
+            },
+            { nombre: "Combo Grande", desc: "1 Pizza (1 ing), 20 Alitas, 2 Papas, Soda 1.25L", precio: 26.99,
+                options: [
+                    { name: "Pizza", choices: ["Jamón", "Pepperoni", "Queso"] },
+                    { name: "Alitas", choices: ["BBQ", "Búfalo"] }
+                ]
+            },
+            { nombre: "Combo Especial", desc: "1 Gigante Especialidad, 8 Alitas, Papas, Pan/Ajo, Ketchup", precio: 22.99,
+                options: [
+                    { name: "Pizza", choices: ["Suprema", "Vegetariana", "Hawaiana", "Meat Lover"] },
+                    { name: "Alitas", choices: ["BBQ", "Búfalo"] }
+                ]
+            },
+            { nombre: "Combo Combinado", desc: "1 Pizza 1 ing, 10 Alitas, Papas, Ketchup", precio: 16.99,
+                options: [
+                    { name: "Pizza", choices: ["Jamón", "Pepperoni", "Queso"] },
+                    { name: "Alitas", choices: ["BBQ", "Búfalo"] }
+                ]
+            },
+            { nombre: "Combo XL", desc: "1 Gigante Esp, Pan ajo, 5 Piezas Pollo, Soda 1.25L", precio: 27.49,
+                options: [
+                    { name: "Pizza", choices: ["Suprema", "Vegetariana", "Hawaiana", "Meat Lover"] }
+                ]
+            },
+            { nombre: "Combo #1", desc: "2 Gigantes Especialidad + Pan con ajo", precio: 23.49,
+                options: [
+                    { name: "Pizza 1", choices: ["Suprema", "Vegetariana", "Hawaiana", "Meat Lover"] },
+                    { name: "Pizza 2", choices: ["Suprema", "Vegetariana", "Hawaiana", "Meat Lover"] }
+                ]
+            },
+            { nombre: "Combo #2", desc: "1 Pizza (1 ing), 10 Alitas, Papas, CheeseStick", precio: 22.99,
+                options: [
+                    { name: "Pizza", choices: ["Jamón", "Pepperoni", "Queso"] },
+                    { name: "Alitas", choices: ["BBQ", "Búfalo"] }
+                ]
+            },
+            { nombre: "Combo #3", desc: "3 Gigantes (1 Esp, 2 Un Ing), 10 Alitas, Papas", precio: 38.99,
+                options: [
+                    { name: "Pizza Especialidad", choices: ["Suprema", "Vegetariana", "Hawaiana", "Meat Lover"] },
+                    { name: "Pizza 1 Ingrediente 1", choices: ["Jamón", "Pepperoni", "Queso"] },
+                    { name: "Pizza 1 Ingrediente 2", choices: ["Jamón", "Pepperoni", "Queso"] },
+                    { name: "Alitas", choices: ["BBQ", "Búfalo"] }
+                ]
+            }
         ]
     },
 
@@ -290,13 +335,13 @@ document.addEventListener('DOMContentLoaded', () => {
         categoria: "Cenas Típicas",
         descripcion: "Servidas de 5:00 PM en adelante",
         items: [
-            { nombre: "Cena Tradicional con Huevos Revueltos / Cena Tradicional con Huevos Picados / Cena Tradicional con Huevos con Vegetales", desc: "2 Huevos, frijoles, plátano, pan, café", precio: 3.50 },
-            { nombre: "Cena Ranchera con Huevos Revueltos / Cena Ranchera con Huevos Picados / Cena Ranchera con Huevos con Vegetales", desc: "Huevos, frijoles, plátano, chorizo, tocino", precio: 4.25 },
+            { nombre: "Cena Tradicional con Huevos Revueltos / Cena Tradicional con Huevos Picados / Cena Tradicional con Huevos con Vegetales / Cena Tradicional con Huevo Estrellado", desc: "2 Huevos, frijoles, plátano, pan, café", precio: 3.50 },
+            { nombre: "Cena Ranchera con Huevos Revueltos / Cena Ranchera con Huevos Picados / Cena Ranchera con Huevos con Vegetales / Cena Ranchera con Huevo Estrellado", desc: "Huevos, frijoles, plátano, chorizo, tocino", precio: 4.25 },
             { nombre: "Omelette con jamón y queso / Omelette con vegetales", desc: "Con jamón y queso", precio: 4.50 },
             { nombre: "Pan Cakes", desc: "Con Nutella, miel, banano", precio: 3.99 },
-            { nombre: "Cena Americana con Huevos Revueltos / Cena Americana con Huevos Picados / Cena Americana con Huevos con Vegetales", desc: "Huevos, pancake, frijoles, chorizo", precio: 5.25 },
-            { nombre: "Cena de Toque con Huevos Revueltos / Cena de Toque con Huevos Picados / Cena de Toque con Huevos con Vegetales", desc: "Huevos, frijoles, 3 alitas", precio: 4.99 },
-            { nombre: "Burrito Cena con Huevos Revueltos / Burrito Cena con Huevos Picados / Burrito Cena con Huevos con Vegetales", desc: "Huevos, frijoles, queso", precio: 4.50 }
+            { nombre: "Cena Americana con Huevos Revueltos / Cena Americana con Huevos Picados / Cena Americana con Huevos con Vegetales / Cena Americana con Huevo Estrellado", desc: "Huevos, pancake, frijoles, chorizo", precio: 5.25 },
+            { nombre: "Cena de Toque con Huevos Revueltos / Cena de Toque con Huevos Picados / Cena de Toque con Huevos con Vegetales / Cena de Toque con Huevo Estrellado", desc: "Huevos, frijoles, 3 alitas", precio: 4.99 },
+            { nombre: "Burrito Cena con Huevos Revueltos / Burrito Cena con Huevos Picados / Burrito Cena con Huevos con Vegetales / Burrito Cena con Huevo Estrellado", desc: "Huevos, frijoles, queso", precio: 4.50 }
         ]
     },
 
