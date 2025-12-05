@@ -73,24 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     },
 
-    // 3. COMBO FAMILIAR $19.99 (DESTACADO)
-    {
-        categoria: "🔥 SÚPER COMBO FAMILIAR",
-        descripcion: "¡El más vendido!",
-        items: [
-            { 
-                nombre: "Combo Familiar $19.99", 
-                desc: "1 Pizza Gigante + 1 Orden Pan con Ajo + 10 Alitas + 1 Soda (1 Litro) + 1 Orden Papas Francesas. (Cambio a Suprema +$1.99)", 
-                precio: 19.99,
-                options: [
-                    { name: "Pizza", choices: ["Jamón", "Pepperoni"] },
-                    { name: "Alitas", choices: ["BBQ", "Búfalo"] }
-                ]
-            }
-        ]
-    },
-
-    // 4. COMBOS FAMILIARES (RESTO)
+    // 3. COMBOS FAMILIARES (RESTO)
     {
         categoria: "Combos Familiares",
         items: [
@@ -151,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     },
 
-    // 5. PUPUSAS
+    // 4. PUPUSAS
     {
         categoria: "Pupusas",
         descripcion: "Delicias típicas",
@@ -170,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     },
 
-    // 6. ZONA DE FRITURA
+    // 5. ZONA DE FRITURA
     {
         categoria: "Zona de Fritura",
         descripcion: "Alitas y Snacks",
@@ -185,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     },
 
-    // 7. SABOR A TU PALADAR (Paninis y Rellenitas)
+    // 6. SABOR A TU PALADAR (Paninis y Rellenitas)
     {
         categoria: "Sabor a tu Paladar",
         descripcion: "Paninis, Rellenitas y Chicharrones",
@@ -208,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     },
 
-    // 8. POLLO FRITO
+    // 7. POLLO FRITO
     {
         categoria: "Pollo Frito",
         items: [
@@ -221,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     },
 
-    // 9. HAMBURGUESAS Y HOT DOGS
+    // 8. HAMBURGUESAS Y HOT DOGS
     {
         categoria: "Hamburguesas y Hot Dogs",
         items: [
@@ -237,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     },
 
-    // 10. VARIEDAD DE PLATILLOS (Típicos, Quesadillas, Burritos)
+    // 9. VARIEDAD DE PLATILLOS (Típicos, Quesadillas, Burritos)
     {
         categoria: "Variedad de Platillos",
         descripcion: "Quesadillas, Burritos, Lasañas y Típicos",
@@ -263,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     },
 
-    // 11. MENÚ INFANTIL (Todo a $4.99)
+    // 10. MENÚ INFANTIL (Todo a $4.99)
     {
         categoria: "Menú Infantil ($4.99)",
         descripcion: "Incluye Papas, Aderezo y Soda",
@@ -277,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     },
 
-    // 12. TODAS LAS BEBIDAS Y POSTRES
+    // 11. TODAS LAS BEBIDAS Y POSTRES
     {
         categoria: "Bebidas y Postres",
         items: [
@@ -305,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     },
 
-    // 13. CREPAS Y POSTRES
+    // 12. CREPAS Y POSTRES
     {
         categoria: "Crepas y Postres",
         items: [
@@ -330,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     },
 
-    // 14. MENU DE CENAS
+    // 13. MENU DE CENAS
     {
         categoria: "Cenas Típicas",
         descripcion: "Servidas de 5:00 PM en adelante",
@@ -345,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     },
 
-    // 15. EXTRAS
+    // 14. EXTRAS
     {
         categoria: "Extras",
         items: [
@@ -368,16 +351,14 @@ document.addEventListener('DOMContentLoaded', () => {
         fam: 'Familiar'
     };
 
-    const renderMenu = () => {
+    const renderMenu = (filter = 'all') => {
         menuItemsContainer.innerHTML = '';
-        menu.forEach(category => {
+        const filteredMenu = menu.filter(category => filter === 'all' || category.categoria === filter);
+
+        filteredMenu.forEach(category => {
             const categoryElement = document.createElement('div');
             categoryElement.classList.add('menu-category');
-            let categoryHTML = `<h3>${category.categoria}</h3>`;
-            if (category.descripcion) {
-                categoryHTML += `<p class="category-description">${category.descripcion}</p>`;
-            }
-            categoryElement.innerHTML = categoryHTML;
+            
             const itemsContainer = document.createElement('div');
             itemsContainer.classList.add('menu-items-grid');
             
@@ -476,6 +457,31 @@ document.addEventListener('DOMContentLoaded', () => {
             menuItemsContainer.appendChild(categoryElement);
         });
     };
+
+    const menuCategoriesNav = document.getElementById('menu-categories-nav');
+    const allButton = document.createElement('button');
+    allButton.classList.add('menu-category-button', 'active');
+    allButton.textContent = 'Todo';
+    allButton.addEventListener('click', () => {
+        renderMenu('all');
+        document.querySelectorAll('.menu-category-button').forEach(btn => btn.classList.remove('active'));
+        allButton.classList.add('active');
+    });
+    menuCategoriesNav.appendChild(allButton);
+
+    menu.forEach(category => {
+        const button = document.createElement('button');
+        button.classList.add('menu-category-button');
+        button.textContent = category.categoria;
+        button.addEventListener('click', () => {
+            renderMenu(category.categoria);
+            document.querySelectorAll('.menu-category-button').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+        });
+        menuCategoriesNav.appendChild(button);
+    });
+
+
 
     const renderOrder = () => {
         orderItemsContainer.innerHTML = '';
