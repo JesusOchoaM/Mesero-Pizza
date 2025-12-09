@@ -164,7 +164,7 @@
                 let itemsHtml = "";
                 if (data.items) {
                     data.items.forEach(item => {
-                        itemsHtml += `<li>${item.name}</li>`;
+                        itemsHtml += `<li><b>${item.quantity}</b> x ${item.name} - <b>$${(item.price * item.quantity).toFixed(2)}</b></li>`;
                     });
                 }
 
@@ -195,6 +195,7 @@
                     const cambio = (data.pagaCon - data.total).toFixed(2);
                     pagoHtml += `<br><strong>Paga con:</strong> $${data.pagaCon.toFixed(2)} - <strong>Cambio:</strong> $${cambio}`;
                 }
+                pagoHtml = `<div style="font-size: 1.4rem; color: #4fc3f7; border-bottom: 1px solid #555; margin-bottom: 5px;">TOTAL: $${data.total.toFixed(2)}</div>` + pagoHtml;
                 pagoDiv.innerHTML = pagoHtml;
 
                 container.appendChild(card);

@@ -502,11 +502,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="menu-item-actions">
                         ${priceHTML.includes('<select') ? priceHTML : ''}
+                        <input type="number" min="1" value="1" class="qty-input" style="width: 60px; padding: 5px; margin-right: 5px; border-radius: 5px; border: 1px solid #ddd;">
                         <button class="btn-add-item">Agregar</button>
                     </div>
                 `;
 
                 menuItemElement.querySelector('.btn-add-item').addEventListener('click', () => {
+                    const quantity = parseInt(menuItemElement.querySelector('.qty-input').value) || 1;
                     let name = item.nombre;
                     let price = 0;
                     let optionsSummary = '';
@@ -540,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         price = item.precio;
                     }
                     
-                    addItemToOrder({ name, price });
+                    addItemToOrder({ name, price }, quantity);
                 });
                 itemsContainer.appendChild(menuItemElement);
             });
@@ -700,12 +702,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    const addItemToOrder = (item) => {
+    const addItemToOrder = (item, quantity = 1) => {
         const existingItem = order.find(orderItem => orderItem.name === item.name);
         if (existingItem) {
-            existingItem.quantity++;
+            existingItem.quantity += quantity;
         } else {
-            order.push({ ...item, quantity: 1 });
+            order.push({ ...item, quantity: quantity });
         }
         renderOrder();
     };
