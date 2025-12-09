@@ -80,6 +80,21 @@
                     <strong>Total:</strong>
                     <span id="order-total">$0.00</span>
                 </div>
+                <div class="payment-section">
+                    <div class="form-group">
+                        <label for="payment-method">Método de Pago:</label>
+                        <select id="payment-method" name="payment-method">
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Tarjeta">Tarjeta</option>
+                            <option value="Transferencia">Transferencia</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="cash-payment-group" style="display: none;">
+                        <label for="cash-amount">Paga con:</label>
+                        <input type="number" id="cash-amount" name="cash-amount" placeholder="Monto con el que paga">
+                    </div>
+                    <div id="change-display" class="change-display"></div>
+                </div>
                 <button id="reset-order-btn" class="btn-secondary">Reiniciar Pedido</button>
                 <button id="btn-enviar-firebase" class="btn-primary" onclick="sendOrderToFirestore()">Enviar Pedido</button>
             </aside>
