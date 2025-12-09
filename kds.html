@@ -106,6 +106,8 @@
         <p style="text-align:center; width:100%; color:#555; grid-column: 1/-1;">Cargando pedidos...</p>
     </div>
 
+    <audio id="notificacionAudio" src="https://actions.google.com/sounds/v1/cartoon/clank_car_crash.ogg" preload="auto" style="display:none;"></audio>
+
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
@@ -130,28 +132,35 @@
 
         // ESCUCHA EN TIEMPO REAL
         db.collection("pedidos_activos")
-          .orderBy("timestamp", "asc") // Ordenar por hora de llegada
+          .orderBy("timestamp", "asc")
           .onSnapshot((snapshot) => {
-            
-            container.innerHTML = ""; // Limpiar pantalla antes de redibujar
 
-            if (snapshot.empty) {
+            // --- REPRODUCIR SONIDO PARA PEDIDOS NUEVOS ---
+            snapshot.docChanges().forEach(change => {
+                if (change.type === "added") {
+                    console.log("Nuevo pedido detectado:", change.doc.data());
+                    const audio = document.getElementById('notificacionAudio');
+                    // El navegador puede bloquear el autoplay si el usuario no ha interactuado con la página
+                    audio.play().catch(error => {
+                        console.warn("No se pudo reproducir el sonido de notificación:", error.message);
+                        alert("🔔 ¡NUEVO PEDIDO RECIBIDO! 🔔\n(Haz clic en la página para activar el sonido en el futuro)");
+                    });
+                }
+            });
+
+            // --- REDIBUJAR TODA LA PANTALLA (lógica existente) ---
+            const allDocs = snapshot.docs;
+            container.innerHTML = ""; // Limpiar pantalla
+
+            if (allDocs.length === 0) {
                 container.innerHTML = "<h3 style='text-align:center; width:100%; color:#555; grid-column: 1/-1;'>No hay pedidos pendientes 😴</h3>";
                 return;
             }
 
-            snapshot.forEach((doc) => {
+            allDocs.forEach((doc) => {
                 const data = doc.data();
                 const id = doc.id;
                 
-                // Calcular hora legible
-                let horaTexto = "Hace poco";
-                if(data.timestamp) {
-                    const fecha = data.timestamp.toDate();
-                    horaTexto = fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                }
-
-                // Generar lista de comida
                 let itemsHtml = "";
                 if (data.items) {
                     data.items.forEach(item => {
@@ -159,11 +168,10 @@
                     });
                 }
 
-                // Crear tarjeta
                 const card = document.createElement("div");
                 const estadoClase = data.status === 'LISTO' ? 'listo' : 'pendiente';
                 card.className = `ticket ${estadoClase}`;
-                card.dataset.id = id; // Guardar ID para referencia
+                card.dataset.id = id;
 
                 card.innerHTML = `
                     <div class="header">
@@ -173,7 +181,6 @@
                     <div class="cliente">👤 ${data.apellido || 'Cliente'}</div>
                     <div class="pago"></div>
                     <ul>${itemsHtml}</ul>
-                    
                     <div class="actions">
                         ${data.status === 'PENDIENTE' 
                             ? `<button class="btn-listo" onclick="cambiarEstado('${id}', 'LISTO')">✅ MARCAR LISTO</button>` 
@@ -182,48 +189,38 @@
                     </div>
                 `;
 
-                // --- 2. Llenar datos de pago ---
                 const pagoDiv = card.querySelector('.pago');
                 let pagoHtml = `<strong>Pago:</strong> ${data.metodoPago || 'No especificado'}`;
-                if (data.metodoPago === 'Efectivo' && data.pagaCon !== undefined) {
+                if (data.metodoPago === 'Efectivo' && data.pagaCon !== undefined && data.total !== undefined) {
                     const cambio = (data.pagaCon - data.total).toFixed(2);
-                    pagoHtml += `<br><strong>Paga con:</strong> $${data.pagaCon} - <strong>Cambio:</strong> $${cambio}`;
+                    pagoHtml += `<br><strong>Paga con:</strong> $${data.pagaCon.toFixed(2)} - <strong>Cambio:</strong> $${cambio}`;
                 }
                 pagoDiv.innerHTML = pagoHtml;
 
-
                 container.appendChild(card);
 
-                // --- 3. Iniciar Cronómetro ---
                 const timerSpan = card.querySelector('.timer');
                 if (data.timestamp) {
                     const startTime = data.timestamp.toDate();
-
                     const updateTimer = () => {
                         const now = new Date();
                         const elapsed = Math.floor((now - startTime) / 1000); // segundos
-                        
                         const minutes = Math.floor(elapsed / 60);
                         const seconds = elapsed % 60;
-
                         timerSpan.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-                        // Si han pasado más de 15 minutos (900 segundos), poner en rojo
-                        if (elapsed > 900) {
+                        if (elapsed > 900) { // 15 minutos
                             timerSpan.style.color = '#e74c3c';
                             timerSpan.style.fontWeight = 'bold';
                         }
                     };
-
-                    updateTimer(); // Primera actualización inmediata
+                    updateTimer();
                     const intervalId = setInterval(updateTimer, 1000);
-                    card.dataset.intervalId = intervalId; // Guardar para posible limpieza
+                    card.dataset.intervalId = intervalId;
                 }
             });
 
-            // Limpiar intervalos viejos al recibir nuevos datos
-            // Esto es un parche simple. Una gestión de estado más robusta sería mejor.
-            const currentIds = new Set(snapshot.docs.map(doc => doc.id));
+            // Limpiar intervalos viejos al quitar un ticket
+            const currentIds = new Set(allDocs.map(doc => doc.id));
             document.querySelectorAll('.ticket').forEach(ticket => {
                 const ticketId = ticket.dataset.id;
                 if (!currentIds.has(ticketId)) {
