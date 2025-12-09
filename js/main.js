@@ -24,6 +24,51 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeOrderIntervals = {};
     let currentOrderId = null;
 
+    window.sendOrderToFirestore = async function() {
+        const lastName = lastNameInput.value.trim();
+        const tableNumber = tableNumberSelect.value;
+        const isDelivery = deliveryOption.checked;
+        const address = addressInput.value.trim();
+
+        // Validaciones
+        if (!lastName) {
+            alert('Por favor, ingrese el apellido.');
+            return;
+        }
+        if (isDelivery && !address) {
+            alert('Por favor, ingrese la dirección de entrega.');
+            return;
+        }
+        if (!isDelivery && !tableNumber) {
+            alert('Por favor, seleccione una mesa.');
+            return;
+        }
+        if (order.length === 0) {
+            alert('No hay items en el pedido.');
+            return;
+        }
+        
+        const docId = isDelivery ? `Llevar-${lastName}` : `Mesa ${tableNumber}`;
+        const orderData = {
+            mesa: isDelivery ? "Llevar" : `Mesa ${tableNumber}`,
+            apellido: lastName,
+            items: order,
+            total: order.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+            status: 'PENDIENTE',
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            nota: isDelivery ? document.getElementById('address').value : ''
+        };
+
+        try {
+            await db.collection('pedidos_activos').doc(docId).set(orderData);
+            alert('✅ Pedido enviado a Cocina');
+            resetOrderBtn.click();
+        } catch (error) {
+            console.error(error);
+            alert('❌ Error al conectar con el servidor');
+        }
+    };
+
     deliveryOption.addEventListener('change', () => {
         addressGroup.style.display = deliveryOption.checked ? 'block' : 'none';
         tableNumberGroup.style.display = deliveryOption.checked ? 'none' : 'block';
