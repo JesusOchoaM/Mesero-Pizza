@@ -61,7 +61,16 @@
 
         .mesa { font-size: 1.8rem; font-weight: bold; }
         .hora { font-size: 0.9rem; color: #aaa; }
+        .timer { font-size: 1.2rem; font-weight: bold; color: #FF9800; }
         .cliente { color: #4fc3f7; font-weight: bold; margin-bottom: 5px;}
+        .pago {
+            background-color: #2c2c2c;
+            padding: 8px;
+            margin: 5px 0 10px 0;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
 
         ul { padding-left: 20px; margin: 0; flex-grow: 1; }
         li { margin-bottom: 8px; font-size: 1.1rem; line-height: 1.4; }
@@ -154,13 +163,15 @@
                 const card = document.createElement("div");
                 const estadoClase = data.status === 'LISTO' ? 'listo' : 'pendiente';
                 card.className = `ticket ${estadoClase}`;
+                card.dataset.id = id; // Guardar ID para referencia
 
                 card.innerHTML = `
                     <div class="header">
                         <span class="mesa">${data.mesa}</span>
-                        <span class="hora">${horaTexto}</span>
+                        <span class="timer">--:--</span>
                     </div>
                     <div class="cliente">👤 ${data.apellido || 'Cliente'}</div>
+                    <div class="pago"></div>
                     <ul>${itemsHtml}</ul>
                     
                     <div class="actions">
@@ -171,7 +182,56 @@
                     </div>
                 `;
 
+                // --- 2. Llenar datos de pago ---
+                const pagoDiv = card.querySelector('.pago');
+                let pagoHtml = `<strong>Pago:</strong> ${data.metodoPago || 'No especificado'}`;
+                if (data.metodoPago === 'Efectivo' && data.pagaCon !== undefined) {
+                    const cambio = (data.pagaCon - data.total).toFixed(2);
+                    pagoHtml += `<br><strong>Paga con:</strong> $${data.pagaCon} - <strong>Cambio:</strong> $${cambio}`;
+                }
+                pagoDiv.innerHTML = pagoHtml;
+
+
                 container.appendChild(card);
+
+                // --- 3. Iniciar Cronómetro ---
+                const timerSpan = card.querySelector('.timer');
+                if (data.timestamp) {
+                    const startTime = data.timestamp.toDate();
+
+                    const updateTimer = () => {
+                        const now = new Date();
+                        const elapsed = Math.floor((now - startTime) / 1000); // segundos
+                        
+                        const minutes = Math.floor(elapsed / 60);
+                        const seconds = elapsed % 60;
+
+                        timerSpan.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                        // Si han pasado más de 15 minutos (900 segundos), poner en rojo
+                        if (elapsed > 900) {
+                            timerSpan.style.color = '#e74c3c';
+                            timerSpan.style.fontWeight = 'bold';
+                        }
+                    };
+
+                    updateTimer(); // Primera actualización inmediata
+                    const intervalId = setInterval(updateTimer, 1000);
+                    card.dataset.intervalId = intervalId; // Guardar para posible limpieza
+                }
+            });
+
+            // Limpiar intervalos viejos al recibir nuevos datos
+            // Esto es un parche simple. Una gestión de estado más robusta sería mejor.
+            const currentIds = new Set(snapshot.docs.map(doc => doc.id));
+            document.querySelectorAll('.ticket').forEach(ticket => {
+                const ticketId = ticket.dataset.id;
+                if (!currentIds.has(ticketId)) {
+                    const intervalId = ticket.dataset.intervalId;
+                    if (intervalId) {
+                        clearInterval(intervalId);
+                    }
+                }
             });
         });
 
