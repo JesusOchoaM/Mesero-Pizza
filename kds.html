@@ -106,8 +106,6 @@
         <p style="text-align:center; width:100%; color:#555; grid-column: 1/-1;">Cargando pedidos...</p>
     </div>
 
-    <audio id="notificacionAudio" src="https://actions.google.com/sounds/v1/cartoon/clank_car_crash.ogg" preload="auto" style="display:none;"></audio>
-
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
@@ -139,11 +137,13 @@
             snapshot.docChanges().forEach(change => {
                 if (change.type === "added") {
                     console.log("Nuevo pedido detectado:", change.doc.data());
-                    const audio = document.getElementById('notificacionAudio');
-                    // El navegador puede bloquear el autoplay si el usuario no ha interactuado con la página
-                    audio.play().catch(error => {
-                        console.warn("No se pudo reproducir el sonido de notificación:", error.message);
-                        alert("🔔 ¡NUEVO PEDIDO RECIBIDO! 🔔\n(Haz clic en la página para activar el sonido en el futuro)");
+                    // Crea y reproduce el audio dinámicamente
+                    const audio = new Audio('https://actions.google.com/sounds/v1/cartoon/clank_car_crash.ogg');
+                    audio.play().catch(e => {
+                        // El navegador bloquea el sonido si el usuario no ha interactuado con la página.
+                        console.warn("No se pudo reproducir el sonido de notificación (requiere interacción del usuario):", e.message);
+                         // Opcional: mostrar una alerta visual como fallback
+                        alert("🔔 ¡NUEVO PEDIDO RECIBIDO! 🔔\n(Haz clic en la página para activar las notificaciones de sonido)");
                     });
                 }
             });

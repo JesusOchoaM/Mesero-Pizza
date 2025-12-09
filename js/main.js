@@ -777,4 +777,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // --- SISTEMA DE NOTIFICACIONES (MESERO) ---
+    // Escucha cambios en tiempo real
+    db.collection('pedidos_activos').onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+            // Si un pedido fue MODIFICADO y ahora su estado es 'LISTO'
+            if (change.type === 'modified') {
+                const data = change.doc.data();
+                if (data.status === 'LISTO') {
+                    // 1. Sonido de éxito
+                    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+                    audio.play().catch(e => console.log('Audio bloqueado'));
+                    // 2. Vibración del celular (200ms)
+                    if (navigator.vibrate) navigator.vibrate(200);
+                    // 3. Alerta visual
+                    alert(`🔔 ¡PEDIDO LISTO!\nMesa: ${data.mesa}\nCliente: ${data.apellido}`);
+                }
+            }
+        });
+    });
 });
