@@ -75,6 +75,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             await db.collection('pedidos_activos').doc(docId).set(orderData);
+            
+            // --- INICIO: Lógica para descontar inventario ---
+            try {
+                await descontarInventario(order);
+            } catch (inventoryError) {
+                console.error("Ocurrió un error al descontar el inventario, pero el pedido fue enviado:", inventoryError);
+                // Opcional: Enviar esta alerta a un sistema de monitoreo
+            }
+            // --- FIN: Lógica para descontar inventario ---
+
             alert('✅ Pedido enviado a Cocina');
             resetOrderBtn.click();
         } catch (error) {
@@ -82,6 +92,68 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('❌ Error al conectar con el servidor');
         }
     };
+
+    /**
+     * Busca el item base en el menú global para encontrar su receta.
+     * @param {string} orderItemName - El nombre del item en la orden (ej. "Pepperoni (Mediana)")
+     * @returns {object|null} - El objeto del menú con su receta o null si no se encuentra.
+     */
+    function getMenuItemByName(orderItemName) {
+        const cleanedName = orderItemName.split(' (')[0]; // "Pepperoni (Mediana)" -> "Pepperoni"
+        for (const category of menu) {
+            for (const item of category.items) {
+                // Comprobar si el nombre del menú es una de las sub-opciones
+                if (item.nombre.includes('/') && item.nombre.includes(cleanedName)) {
+                    return item;
+                }
+                // Comprobar si el nombre del menú coincide directamente
+                if (item.nombre === cleanedName) {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Descuenta los ingredientes del inventario basados en los items de un pedido.
+     * @param {Array} orderItems - El array de items del pedido actual.
+     */
+    async function descontarInventario(orderItems) {
+        const inventoryPromises = orderItems.map(orderItem => {
+            const menuItem = getMenuItemByName(orderItem.name);
+            
+            if (menuItem && menuItem.ingredientes) {
+                const ingredients = menuItem.ingredientes;
+                const quantitySold = orderItem.quantity;
+
+                // Procesar cada ingrediente en la receta
+                const ingredientUpdates = Object.keys(ingredients).map(ingredientId => {
+                    const amountToDeduct = ingredients[ingredientId] * quantitySold;
+                    const ingredientRef = db.collection('inventario').doc(ingredientId);
+
+                    return db.runTransaction(async (transaction) => {
+                        const ingredientDoc = await transaction.get(ingredientRef);
+
+                        if (!ingredientDoc.exists) {
+                            console.warn(`Ingrediente con ID '${ingredientId}' no encontrado en el inventario. No se descontará.`);
+                            return;
+                        }
+
+                        const currentQuantity = ingredientDoc.data().quantity;
+                        const newQuantity = currentQuantity - amountToDeduct;
+                        
+                        transaction.update(ingredientRef, { quantity: newQuantity });
+                    });
+                });
+                return Promise.all(ingredientUpdates);
+            }
+            return Promise.resolve(); // No-op para items sin receta
+        });
+
+        await Promise.all(inventoryPromises);
+    }
+
 
     deliveryOption.addEventListener('change', () => {
         addressGroup.style.display = deliveryOption.checked ? 'block' : 'none';
@@ -136,7 +208,12 @@ document.addEventListener('DOMContentLoaded', () => {
             { nombre: "Calzone Doble Queso", desc: "Full queso", precio: 9.50 },
             { nombre: "Calzone Vegetariana", desc: "Vegetales frescos", precio: 9.50 },
             // Pizzas Tradicionales
-            { nombre: "Pepperoni / Jamón", desc: "Clásica", precios: { peq: 5.00, med: 6.00, fam: 7.99 } },
+            { 
+                nombre: "Pepperoni / Jamón", 
+                desc: "Clásica", 
+                precios: { peq: 5.00, med: 6.00, fam: 7.99 },
+                ingredientes: { 'peperoni': 0.2, 'queso-mozzarella': 0.5, 'salsa-pizza': 0.1 }
+            },
             { nombre: "Pizza con Jamón y Vegetales / Pizza con Pepperoni y Vegetales", desc: "Cebolla, Tomate, Chile", precios: { peq: 5.50, med: 6.99, fam: 8.99 } },
             { nombre: "Salchicha / Chorizo", desc: "Con Jamón o Pepperoni", precios: { peq: 6.00, med: 7.50, fam: 9.75 } },
             { nombre: "Mitad y Mitad", desc: "Jamón y Pepperoni", precios: { peq: 6.00, med: 7.99, fam: 9.99 } },
@@ -331,7 +408,12 @@ document.addEventListener('DOMContentLoaded', () => {
             { nombre: "Enchilada Tradicional", desc: "Unidad", precio: 0.75 },
             { nombre: "Yuca Frita + Chicharrón", desc: "Plato", precio: 2.50 },
             { nombre: "Canoa de Leche", desc: "Plátano dulce", precio: 1.75 },
-            { nombre: "Papas Francesas", desc: "Orden simple", precio: 1.99 },
+            { 
+                nombre: "Papas Francesas", 
+                desc: "Orden simple", 
+                precio: 1.99,
+                ingredientes: { 'papas': 0.5, 'aceite': 0.05, 'ketchup-bolsita': 2 }
+            },
             { nombre: "Papas de Feria", desc: "Ketchup, aderezo, queso", precio: 3.50 },
             { nombre: "Papas Cheddar y Tocino", desc: "Especial", precio: 3.50 }
         ]
