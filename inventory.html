@@ -121,6 +121,8 @@
                     <option value="VARIOS (Generico)">VARIOS (Generico)</option>
                     <option value="LA SABROSURA">LA SABROSURA</option>
                     <option value="SUPER SELECTOS">SUPER SELECTOS</option>
+                    <option value="BEBIDAS Y CERVEZAS">BEBIDAS Y CERVEZAS</option>
+                    <option value="VERDURAS Y OTROS">VERDURAS Y OTROS</option>
                 </select>
                 <input type="number" id="quantity" placeholder="Cantidad">
                 <select id="unit">
@@ -356,7 +358,7 @@
                 `;
                 inventoryBody.appendChild(row);
             });
-        }, error => console.error("Error al escuchar el inventario: ", error));
+        }, error => { console.error("Error de índice:", error); alert("⚠️ Falta crear el índice en Firebase. Revisa la consola (F12) para ver el link."); });
 
         window.editItem = async (id) => {
             const doc = await inventoryCollection.doc(id).get();
