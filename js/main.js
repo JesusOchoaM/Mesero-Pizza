@@ -756,4 +756,25 @@ document.addEventListener('DOMContentLoaded', () => {
     renderMenu();
     renderOrder();
     renderOrderHistory();
+
+    // --- SISTEMA DE NOTIFICACIONES ---
+    // Escuchar solo los pedidos que están LISTOS
+    db.collection('pedidos_activos').where('status', '==', 'LISTO')
+    .onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+            // Si un pedido se acaba de poner en LISTO (added o modified)
+            if (change.type === 'added' || change.type === 'modified') {
+                const data = change.doc.data();
+                
+                // 1. Alerta Visual
+                alert(`🔔 ¡ATENCIÓN! La ${data.mesa} está LISTA para recoger.`);
+                
+                // 2. Alerta de Voz (Opcional, pero muy útil)
+                if ('speechSynthesis' in window) {
+                    const mensaje = new SpeechSynthesisUtterance(`La ${data.mesa} está lista`);
+                    window.speechSynthesis.speak(mensaje);
+                }
+            }
+        });
+    });
 });
