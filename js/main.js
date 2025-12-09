@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderItemsContainer = document.getElementById('order-items');
     const orderTotalElement = document.getElementById('order-total');
     const resetOrderBtn = document.getElementById('reset-order-btn');
-    const payOrderBtn = document.getElementById('pay-order-btn');
     const orderHistoryItemsContainer = document.getElementById('order-history-items');
     const clearHistoryBtn = document.getElementById('clear-history-btn');
     const lastNameInput = document.getElementById('last-name');
@@ -500,12 +499,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         orderTotalElement.textContent = `$${total.toFixed(2)}`;
 
-        if (order.length === 0) {
-            payOrderBtn.disabled = true;
-        } else {
-            payOrderBtn.disabled = false;
-        }
-
         document.querySelectorAll('.btn-remove-item').forEach(button => {
             button.addEventListener('click', (e) => {
                 const index = parseInt(e.target.getAttribute('data-index'));
@@ -718,82 +711,6 @@ document.addEventListener('DOMContentLoaded', () => {
             li.classList.remove('editing');
         });
     });
-
-    payOrderBtn.addEventListener('click', () => {
-        const lastName = lastNameInput.value.trim();
-        const tableNumber = tableNumberSelect.value;
-        const phoneNumber = phoneNumberInput.value.trim();
-        const isDelivery = deliveryOption.checked;
-        const address = addressInput.value.trim();
-        const total = order.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-        if (!lastName) {
-            alert('Por favor, ingrese el apellido.');
-            return;
-        }
-
-        if (isDelivery && !address) {
-            alert('Por favor, ingrese la dirección de entrega.');
-            return;
-        }
-
-        if (!isDelivery && !tableNumber) {
-            alert('Por favor, seleccione una mesa.');
-            return;
-        }
-
-        if (order.length === 0) {
-            alert('No hay items en el pedido.');
-            return;
-        }
-
-        payOrderBtn.disabled = true;
-        payOrderBtn.textContent = 'Enviando...';
-
-        const orderData = {
-            id: currentOrderId || Date.now(),
-            date: new Date().toISOString(),
-            items: order,
-            lastName: lastName,
-            tableNumber: isDelivery ? null : tableNumber,
-            phoneNumber: phoneNumber,
-            total: total.toFixed(2),
-            delivery: isDelivery,
-            address: isDelivery ? address : null,
-            creationTime: Date.now(),
-            deliveryTime: Math.floor(Math.random() * (45 - 10 + 1)) + 10, // Random time between 10 and 45 minutes, a more realistic range for preparation.
-        };
-
-        const existingOrderIndex = activeOrders.findIndex(o => o.id === currentOrderId);
-        if (existingOrderIndex > -1) {
-            activeOrders[existingOrderIndex] = orderData;
-        } else {
-            activeOrders.push(orderData);
-        }
-        localStorage.setItem('activeOrders', JSON.stringify(activeOrders));
-
-        alert(`¡Gracias por tu pedido, ${lastName}! Tu pedido se está procesando.`);
-
-        order = [];
-        currentOrderId = null;
-        renderOrder();
-        renderActiveOrders();
-
-        lastNameInput.value = '';
-        tableNumberSelect.value = '';
-        phoneNumberInput.value = '';
-        addressInput.value = '';
-        deliveryOption.checked = false;
-        addressGroup.style.display = 'none';
-        tableNumberGroup.style.display = 'block';
-        payOrderBtn.textContent = 'Enviar Pedido';
-        payOrderBtn.disabled = false;
-        
-        document.querySelectorAll('#active-orders-items li').forEach(li => {
-            li.classList.remove('editing');
-        });
-    });
-
 
     clearHistoryBtn.addEventListener('click', () => {
         if (confirm('¿Estás seguro de que quieres borrar todo el historial?')) {
