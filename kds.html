@@ -96,11 +96,117 @@
         .btn-archivar:hover { background-color: #27ae60; }
 
         @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Estilos para el Modal de Historial */
+        .historial-btn-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #verHistorialBtn {
+            background-color: #03A9F4;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #verHistorialBtn:hover {
+            background-color: #0288D1;
+        }
+
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+        }
+        .modal-content {
+            background-color: #1e1e1e;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 1000px;
+            border-radius: 10px;
+            color: #fff;
+        }
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #fff;
+            text-decoration: none;
+        }
+        #tablaHistorial {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #tablaHistorial th, #tablaHistorial td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: left;
+        }
+        #tablaHistorial th {
+            background-color: #333;
+            color: #FF9800;
+        }
+        #descargarCsvBtn {
+             background-color: #4CAF50;
+             color: white;
+             padding: 10px 20px;
+             font-size: 1rem;
+             border-radius: 5px;
+             cursor: pointer;
+             margin-bottom: 15px;
+        }
+        #descargarCsvBtn:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
 
     <h1>👨‍🍳 Pantalla de Cocina (KDS)</h1>
+    
+    <div class="historial-btn-container">
+        <button id="verHistorialBtn" onclick="mostrarHistorial()">📜 Ver Historial / Descargar</button>
+    </div>
+
+    <!-- Modal de Historial -->
+    <div id="historialModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="cerrarHistorial()">&times;</span>
+            <h2>Historial de Ventas</h2>
+            <button id="descargarCsvBtn" onclick="descargarReporteCSV()">📥 Descargar Reporte en Excel (CSV)</button>
+            <div style="overflow-x:auto;">
+                <table id="tablaHistorial">
+                    <thead>
+                        <tr>
+                            <th>Archivado</th>
+                            <th>Mesa</th>
+                            <th>Total</th>
+                            <th>Método Pago</th>
+                            <th>Items</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historialBody">
+                        <!-- Filas se insertarán aquí -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     
     <div id="kdsContainer" class="kds-grid">
         <p style="text-align:center; width:100%; color:#555; grid-column: 1/-1;">Cargando pedidos...</p>
@@ -242,13 +348,120 @@
             });
         };
 
-        // 2. Borrar pedido (Cuando ya se entregó)
+        // 2. Archivar y luego borrar pedido
         window.borrarPedido = function(id) {
-            if(confirm("¿Confirmas que este pedido ya fue entregado y pagado?")) {
-                db.collection("pedidos_activos").doc(id).delete();
+            if (!confirm("¿Confirmas que este pedido ya fue entregado y pagado?")) {
+                return;
             }
+
+            const pedidoRef = db.collection("pedidos_activos").doc(id);
+
+            pedidoRef.get().then((doc) => {
+                if (doc.exists) {
+                    const datosPedido = doc.data();
+                    
+                    // Añadir fecha de archivado
+                    datosPedido.fechaArchivado = firebase.firestore.FieldValue.serverTimestamp();
+
+                    // Guardar en el historial
+                    db.collection("historial_ventas").add(datosPedido)
+                        .then(() => {
+                            // Si se guarda bien, lo borramos de activos
+                            pedidoRef.delete();
+                        })
+                        .catch((error) => {
+                            console.error("Error al archivar el pedido: ", error);
+                            alert("No se pudo archivar el pedido. Inténtalo de nuevo.");
+                        });
+                } else {
+                    alert("Error: El pedido no fue encontrado.");
+                }
+            }).catch((error) => {
+                console.error("Error al obtener el pedido: ", error);
+                alert("Error al obtener datos del pedido.");
+            });
         };
 
+        // 3. Mostrar el modal con el historial
+        window.mostrarHistorial = function() {
+            const modal = document.getElementById('historialModal');
+            const tbody = document.getElementById('historialBody');
+            tbody.innerHTML = '<tr><td colspan="5">Cargando historial...</td></tr>';
+            modal.style.display = 'block';
+
+            db.collection("historial_ventas")
+              .orderBy("fechaArchivado", "desc")
+              .limit(10)
+              .get()
+              .then((querySnapshot) => {
+                  tbody.innerHTML = ''; // Limpiar la tabla
+                  if (querySnapshot.empty) {
+                      tbody.innerHTML = '<tr><td colspan="5">No hay pedidos en el historial.</td></tr>';
+                      return;
+                  }
+                  querySnapshot.forEach(doc => {
+                      const data = doc.data();
+                      const itemsStr = data.items.map(item => `${item.quantity}x ${item.name}`).join(', ');
+                      const fecha = data.fechaArchivado ? data.fechaArchivado.toDate().toLocaleString('es-ES') : 'N/A';
+                      
+                      const row = `<tr>
+                          <td>${fecha}</td>
+                          <td>${data.mesa}</td>
+                          <td>$${data.total.toFixed(2)}</td>
+                          <td>${data.metodoPago}</td>
+                          <td>${itemsStr}</td>
+                      </tr>`;
+                      tbody.innerHTML += row;
+                  });
+              })
+              .catch(error => {
+                  console.error("Error al cargar el historial: ", error);
+                  tbody.innerHTML = '<tr><td colspan="5">Error al cargar el historial.</td></tr>';
+              });
+        };
+
+        // 4. Cerrar el modal
+        window.cerrarHistorial = function() {
+            document.getElementById('historialModal').style.display = 'none';
+        };
+
+        // 5. Descargar reporte CSV
+        window.descargarReporteCSV = function() {
+            db.collection("historial_ventas").orderBy("fechaArchivado", "asc").get().then(snapshot => {
+                if (snapshot.empty) {
+                    alert("No hay datos para exportar.");
+                    return;
+                }
+
+                let csvContent = "data:text/csv;charset=utf-8,";
+                // Encabezados
+                csvContent += "Fecha,Mesa,Total,MetodoPago,Items,Cliente\r\n";
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const fecha = data.fechaArchivado ? data.fechaArchivado.toDate().toISOString() : 'N/A';
+                    const mesa = data.mesa || '';
+                    const total = data.total || 0;
+                    const metodoPago = data.metodoPago || '';
+                    const cliente = data.apellido || 'Cliente';
+                    const items = data.items.map(item => `${item.quantity}x ${item.name} ($${item.price.toFixed(2)})`).join('; ');
+
+                    const row = `"${fecha}","${mesa}","${total.toFixed(2)}","${metodoPago}","${items}","${cliente}"`;
+                    csvContent += row + "\r\n";
+                });
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "reporte_ventas_just_great_pizza.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }).catch(err => {
+                console.error("Error al generar el CSV: ", err);
+                alert("Error al generar el reporte.");
+            });
+        };
     </script>
 </body>
 </html>
