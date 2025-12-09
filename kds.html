@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cocina - Just Great Pizza</title>
+    <style>
+        body { 
+            background-color: #121212; 
+            color: #ffffff; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+        }
+        
+        h1 { 
+            text-align: center; 
+            color: #FF9800; 
+            border-bottom: 2px solid #333; 
+            padding-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Cuadrícula de tickets */
+        .kds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        /* Diseño del Ticket */
+        .ticket {
+            background-color: #1e1e1e;
+            border-left: 10px solid #555;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        /* Estado: PENDIENTE (Naranja) */
+        .ticket.pendiente { border-left-color: #FF9800; }
+        .ticket.pendiente .mesa { color: #FF9800; }
+
+        /* Estado: LISTO (Verde) */
+        .ticket.listo { border-left-color: #2ecc71; opacity: 0.9; }
+        .ticket.listo .mesa { color: #2ecc71; text-decoration: underline; }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .mesa { font-size: 1.8rem; font-weight: bold; }
+        .hora { font-size: 0.9rem; color: #aaa; }
+        .cliente { color: #4fc3f7; font-weight: bold; margin-bottom: 5px;}
+
+        ul { padding-left: 20px; margin: 0; flex-grow: 1; }
+        li { margin-bottom: 8px; font-size: 1.1rem; line-height: 1.4; }
+
+        /* Botones de Acción */
+        .actions { margin-top: 15px; }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-listo { background-color: #FF9800; color: #000; }
+        .btn-listo:hover { background-color: #F57C00; }
+
+        .btn-archivar { background-color: #2ecc71; color: #fff; }
+        .btn-archivar:hover { background-color: #27ae60; }
+
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <h1>👨‍🍳 Pantalla de Cocina (KDS)</h1>
+    
+    <div id="kdsContainer" class="kds-grid">
+        <p style="text-align:center; width:100%; color:#555; grid-column: 1/-1;">Cargando pedidos...</p>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ============================================================
+        // ⚠️ PEGA AQUÍ LAS MISMAS CREDENCIALES QUE EN INDEX.HTML ⚠️
+        // ============================================================
+        const firebaseConfig = {
+          // LO QUE COPIASTE DE LA PANTALLA [image: be1813.png]
+          apiKey: "Aiz********N1",
+          authDomain: "just-great-pizza-system.firebaseapp.com",
+          projectId: "just-great-pizza-system",
+          messagingSenderId: "30074620354",
+          appId: "1:30074620354:web:4f1f36fad96ac2cad2ae5b"
+      };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const container = document.getElementById('kdsContainer');
+
+        // ESCUCHA EN TIEMPO REAL
+        db.collection("pedidos_activos")
+          .orderBy("timestamp", "asc") // Ordenar por hora de llegada
+          .onSnapshot((snapshot) => {
+            
+            container.innerHTML = ""; // Limpiar pantalla antes de redibujar
+
+            if (snapshot.empty) {
+                container.innerHTML = "<h3 style='text-align:center; width:100%; color:#555; grid-column: 1/-1;'>No hay pedidos pendientes 😴</h3>";
+                return;
+            }
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const id = doc.id;
+                
+                // Calcular hora legible
+                let horaTexto = "Hace poco";
+                if(data.timestamp) {
+                    const fecha = data.timestamp.toDate();
+                    horaTexto = fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                }
+
+                // Generar lista de comida
+                let itemsHtml = "";
+                if (data.items) {
+                    data.items.forEach(item => {
+                        itemsHtml += `<li>${item.nombre}</li>`;
+                    });
+                }
+
+                // Crear tarjeta
+                const card = document.createElement("div");
+                const estadoClase = data.status === 'LISTO' ? 'listo' : 'pendiente';
+                card.className = `ticket ${estadoClase}`;
+
+                card.innerHTML = `
+                    <div class="header">
+                        <span class="mesa">${data.mesa}</span>
+                        <span class="hora">${horaTexto}</span>
+                    </div>
+                    <div class="cliente">👤 ${data.apellido || 'Cliente'}</div>
+                    <ul>${itemsHtml}</ul>
+                    
+                    <div class="actions">
+                        ${data.status === 'PENDIENTE' 
+                            ? `<button class="btn-listo" onclick="cambiarEstado('${id}', 'LISTO')">✅ MARCAR LISTO</button>` 
+                            : `<button class="btn-archivar" onclick="borrarPedido('${id}')">🗑️ ENTREGADO / ARCHIVAR</button>`
+                        }
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        });
+
+        // FUNCIONES DE CONTROL
+        
+        // 1. Cambiar estado a LISTO (Color verde)
+        window.cambiarEstado = function(id, nuevoEstado) {
+            db.collection("pedidos_activos").doc(id).update({
+                status: nuevoEstado
+            });
+        };
+
+        // 2. Borrar pedido (Cuando ya se entregó)
+        window.borrarPedido = function(id) {
+            if(confirm("¿Confirmas que este pedido ya fue entregado y pagado?")) {
+                db.collection("pedidos_activos").doc(id).delete();
+            }
+        };
+
+    </script>
+</body>
+</html>
