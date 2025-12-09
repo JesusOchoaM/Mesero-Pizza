@@ -99,6 +99,23 @@
         <button id="clear-history-btn" class="btn-secondary">Limpiar Historial</button>
     </section>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script>
+      // 2. PEGA AQUÍ TUS CREDENCIALES REALES
+      const firebaseConfig = {
+          // LO QUE COPIASTE DE LA PANTALLA [image: be1813.png]
+          apiKey: "Aiz********N1",
+          authDomain: "just-great-pizza-system.firebaseapp.com",
+          projectId: "just-great-pizza-system",
+          messagingSenderId: "30074620354",
+          appId: "1:30074620354:web:4f1f36fad96ac2cad2ae5b"
+      };
+      
+      // 3. Inicializar y crear la referencia de la BD (db)
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore(); 
+    </script>
     <script src="js/main.js"></script>
 </body>
 </html>
