@@ -188,7 +188,7 @@
         <div class="modal-content">
             <span class="close-btn" onclick="cerrarHistorial()">&times;</span>
             <h2>Historial de Ventas</h2>
-            <button id="descargarCsvBtn" onclick="descargarReporteCSV()">📥 Descargar Reporte en Excel (CSV)</button>
+            <button id="descargarCsvBtn" onclick="descargarReporte()">📥 Descargar Reporte en Excel (CSV)</button>
             <div style="overflow-x:auto;">
                 <table id="tablaHistorial">
                     <thead>
@@ -426,41 +426,58 @@
         };
 
         // 5. Descargar reporte CSV
-        window.descargarReporteCSV = function() {
-            db.collection("historial_ventas").orderBy("fechaArchivado", "asc").get().then(snapshot => {
+        window.descargarReporte = async function() {
+            try {
+                const snapshot = await db.collection('historial_ventas').orderBy('fechaArchivado', 'desc').get();
+                
                 if (snapshot.empty) {
-                    alert("No hay datos para exportar.");
+                    alert("No hay historial para descargar.");
                     return;
                 }
-
-                let csvContent = "data:text/csv;charset=utf-8,";
-                // Encabezados
-                csvContent += "Fecha,Mesa,Total,MetodoPago,Items,Cliente\r\n";
-
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const fecha = data.fechaArchivado ? data.fechaArchivado.toDate().toISOString() : 'N/A';
-                    const mesa = data.mesa || '';
-                    const total = data.total || 0;
-                    const metodoPago = data.metodoPago || '';
-                    const cliente = data.apellido || 'Cliente';
-                    const items = data.items.map(item => `${item.quantity}x ${item.name} ($${item.price.toFixed(2)})`).join('; ');
-
-                    const row = `"${fecha}","${mesa}","${total.toFixed(2)}","${metodoPago}","${items}","${cliente}"`;
-                    csvContent += row + "\r\n";
-                });
-
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", "reporte_ventas_just_great_pizza.csv");
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }).catch(err => {
-                console.error("Error al generar el CSV: ", err);
-                alert("Error al generar el reporte.");
+            // 1. Encabezados con Punto y Coma
+            let csvContent = "Fecha;Hora;Mesa;Cliente;Metodo Pago;Total;Items\n";
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                
+                // 2. Formatear Fecha y Hora
+                let fecha = "N/A";
+                let hora = "N/A";
+                if (data.fechaArchivado) {
+                    const dateObj = data.fechaArchivado.toDate();
+                    fecha = dateObj.toLocaleDateString();
+                    hora = dateObj.toLocaleTimeString();
+                }
+                // 3. Limpiar Items (reemplazar saltos de linea y comas)
+                let itemsString = "";
+                if (data.items) {
+                    itemsString = data.items.map(i => `${i.quantity}x ${i.name}`).join(" | ");
+                }
+                
+                // 4. Construir la fila asegurando que no haya conflictos
+                const row = [
+                    fecha,
+                    hora,
+                    data.mesa,
+                    (data.apellido || "Cliente").replace(/;/g, ""), // Quitar punto y comas del nombre
+                    data.metodoPago || "N/A",
+                    data.total.toFixed(2),
+                    itemsString
+                ];
+                csvContent += row.join(";") + "\n";
             });
+            // 5. Descargar con BOM para acentos (Universal BOM)
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Reporte_Ventas_Pizza.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error("Error al descargar:", error);
+            alert("Error al generar el reporte");
+        }
         };
     </script>
 </body>
