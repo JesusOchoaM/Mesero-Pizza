@@ -209,7 +209,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     { name: "Pizza 1 Ingrediente 2", choices: ["Jamón", "Pepperoni", "Queso"] },
                     { name: "Alitas", choices: ["BBQ", "Búfalo"] }
                 ]
-            }
+            },
+{
+    nombre: "Combo Familiar $20",
+    desc: "1 Pizza Gigante + Alitas. Selecciona precio si es Tradicional o Especialidad.",
+    precios: {
+        "Tradicional": 19.99,
+        "Con Especialidad (+1.99)": 21.98
+    },
+    options: [
+        { name: "Sabor Pizza", choices: ["Jamón", "Pepperoni", "Suprema (Especialidad)", "Hawaiana (Especialidad)", "Meat Lover (Especialidad)", "Vegetariana (Especialidad)"] },
+        { name: "Salsa Alitas", choices: ["BBQ", "Búfalo"] }
+    ]
+},
         ]
     },
 
@@ -451,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let subOptionsHTML = '';
                 if (item.options) {
                     item.options.forEach(option => {
-                        const optionSelectId = `option-select-${item.nombre.replace(/\s+/g, '-')}-${option.name.replace(/\s+/g, '-')}`;
+                        const optionSelectId = `option-select-${item.nombre.replace(/[^a-zA-Z0-9]/g, '-')}-${option.name.replace(/[^a-zA-Z0-9]/g, '-')}`;
                         subOptionsHTML += `<label for="${optionSelectId}">${option.name}:</label>`;
                         subOptionsHTML += `<select id="${optionSelectId}" class="sub-option-select">`;
                         option.choices.forEach(choice => {
@@ -460,7 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         subOptionsHTML += `</select>`;
                     });
                 } else if (hasSubOptions) {
-                    const subOptionSelectId = `sub-option-select-${item.nombre.replace(/\s+/g, '-')}`;
+                    const subOptionSelectId = `sub-option-select-${item.nombre.replace(/[^a-zA-Z0-9]/g, '-')}`;
                     subOptionsHTML = `<select id="${subOptionSelectId}" class="sub-option-select">`;
                     subOptions.forEach(option => {
                         subOptionsHTML += `<option value="${option}">${option}</option>`;
@@ -470,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 let priceHTML = '';
                 if (item.precios) {
-                    const selectId = `price-select-${item.nombre.replace(/\s+/g, '-')}`;
+                    const selectId = `price-select-${item.nombre.replace(/[^a-zA-Z0-9]/g, '-')}`;
                     priceHTML = `<select id="${selectId}" class="price-select">`;
                     for (const option in item.precios) {
                         const optionText = priceKeyMap[option] || option;
@@ -502,7 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (item.options) {
                         const selectedOptions = [];
                         item.options.forEach(option => {
-                            const optionSelectId = `option-select-${item.nombre.replace(/\s+/g, '-')}-${option.name.replace(/\s+/g, '-')}`;
+                            const optionSelectId = `option-select-${item.nombre.replace(/[^a-zA-Z0-9]/g, '-')}-${option.name.replace(/[^a-zA-Z0-9]/g, '-')}`;
                             const select = menuItemElement.querySelector(`#${optionSelectId}`);
                             selectedOptions.push(`${option.name}: ${select.value}`);
                         });
