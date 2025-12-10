@@ -123,39 +123,80 @@
                 <input type="text" id="product-name" placeholder="Nombre del Producto" list="catalog-list">
                 <datalist id="catalog-list"></datalist>
                 <select id="category">
-                    <option value="PRICE SMART">PRICE SMART</option>
-                    <option value="SUPER SELECTOS">SUPER SELECTOS</option>
-                    <option value="DESPENSA DE DON JUAN">DESPENSA DE DON JUAN</option>
-                    <option value="EL MERCADO">EL MERCADO (Frutas/Verduras)</option>
-                    <option value="LA CONSTANCIA">LA CONSTANCIA (CocaCola, Pilsener, Cristal)</option>
-                    <option value="CBC">CBC (Pepsi, 7Up, Gatorade)</option>
-                    <option value="INDUSTRIAS LA CASCADA">LA CASCADA (SalvaCola, Kolashampan)</option>
-                    <option value="SIGMA">SIGMA / TOLEDO</option>
-                    <option value="CRIO">CRIO</option>
-                    <option value="SELLO DE ORO">SELLO DE ORO</option>
-                    <option value="POLLO INDIO">POLLO INDIO</option>
-                    <option value="LACTOSA">LACTOSA (Sula, Salud)</option>
-                    <option value="DOS PINOS">DOS PINOS</option>
-                    <option value="FOREMOST">FOREMOST</option>
-                    <option value="PETACONES">QUESOS PETACONES</option>
-                    <option value="PRODUCTOS DIANA">PRODUCTOS DIANA</option>
-                    <option value="BOCADELI">BOCADELI</option>
-                    <option value="BIMBO">BIMBO / BREDDY</option>
-                    <option value="PAN LIDO">PAN LIDO</option>
-                    <option value="PAN SINAI">PAN SINAÍ</option>
-                    <option value="MASECA">MASECA / GRUMA</option>
-                    <option value="LA SABROSURA">LA SABROSURA</option>
-                    <option value="CAMPBELL SOUP COMPANY">CAMPBELL SOUP COMPANY (Salsas Prego)</option>
+                    <option value="" disabled selected>-- Busca la Marca o Lugar --</option>
+                    <optgroup label="LUGARES DE COMPRA">
+                        <option value="EL MERCADO">EL MERCADO (Frutas/Verduras/Granel)</option>
+                        <option value="PRICE SMART">PRICE SMART (Club)</option>
+                        <option value="SUPER SELECTOS">SUPER SELECTOS</option>
+                        <option value="TIENDA MAYORISTA">TIENDA MAYORISTA / DEPÓSITO</option>
+                    </optgroup>
+                    <optgroup label="BEBIDAS (NO ALCOHÓLICAS)">
+                        <option value="COCA COLA COMPANY">COCA COLA / FANTA / SPRITE</option>
+                        <option value="PEPSI (CBC)">PEPSI / 7UP / MIRINDA</option>
+                        <option value="LA CASCADA">SALVA COLA / KOLASHAMPAN</option>
+                        <option value="JUGOS DEL VALLE">JUGOS DEL VALLE / FRUTSI</option>
+                        <option value="PETIT">JUGOS PETIT / CALIFORNIA</option>
+                        <option value="AGUA CRISTAL">AGUA CRISTAL</option>
+                        <option value="AGUA ALPINA">AGUA ALPINA</option>
+                    </optgroup>
+                    <optgroup label="BEBIDAS (ALCOHÓLICAS)">
+                        <option value="LA CONSTANCIA">PILSENER / SUPREMA / GOLDEN</option>
+                        <option value="CERVEZA REGIA">CERVEZA REGIA</option>
+                        <option value="HEINEKEN">HEINEKEN / OTRAS IMPORTADAS</option>
+                    </optgroup>
+                    <optgroup label="CARNES Y EMBUTIDOS">
+                        <option value="TOLEDO">TOLEDO (Jamones/Embutidos)</option>
+                        <option value="SIGMA">SIGMA / FUD</option>
+                        <option value="CRIO">CRIO (Huevos/Pollo)</option>
+                        <option value="SELLO DE ORO">SELLO DE ORO (Pollo/Procesados)</option>
+                        <option value="POLLO INDIO">POLLO INDIO</option>
+                        <option value="LA CHILA">LA CHILA (Chorizos)</option>
+                    </optgroup>
+                    <optgroup label="LÁCTEOS Y DERIVADOS">
+                        <option value="SALUD">LECHE SALUD</option>
+                        <option value="SULA">SULA (Leche/Cremas)</option>
+                        <option value="DOS PINOS">DOS PINOS</option>
+                        <option value="FOREMOST">FOREMOST</option>
+                        <option value="PETACONES">QUESOS PETACONES</option>
+                        <option value="SAN JULIAN">SAN JULIÁN</option>
+                    </optgroup>
+                    <optgroup label="SALSAS, ESPECIAS Y ACEITES">
+                        <option value="NATURAS">NATURA'S (Salsas de tomate)</option>
+                        <option value="KERNS">KERN'S (Ketchup/Jugos)</option>
+                        <option value="HELLMANNS">HELLMANN'S (Mayonesa)</option>
+                        <option value="HEINZ">HEINZ (Ketchup/Salsas)</option>
+                        <option value="CAMPBELLS">CAMPBELL'S (Prego)</option>
+                        <option value="MAGGI">MAGGI (Sopas/Consomés)</option>
+                        <option value="KNORR">KNORR (Sabrosador)</option>
+                        <option value="CONTI">CONTI (Salsas/Especias)</option>
+                        <option value="MCCORMICK">MCCORMICK (Especias/Mayonesa)</option>
+                        <option value="BADIA">BADIA (Especias)</option>
+                        <option value="MAZOLA">ACEITE MAZOLA / IDEAL</option>
+                        <option value="ORISOL">ACEITE ORISOL / CLOVER</option>
+                    </optgroup>
+                    <optgroup label="SNACKS Y PANADERÍA">
+                        <option value="DIANA">PRODUCTOS DIANA (Churritos/Dulces)</option>
+                        <option value="BOCADELI">BOCADELI</option>
+                        <option value="BIMBO">BIMBO / BREDDY</option>
+                        <option value="LIDO">PAN LIDO (Postres)</option>
+                        <option value="SINAI">PAN SINAÍ</option>
+                        <option value="MASECA">MASECA (Harina Maíz)</option>
+                        <option value="HARINA GOLD MEDAL">GOLD MEDAL / SUAVE</option>
+                    </optgroup>
                     <optgroup label="LIMPIEZA E HIGIENE">
-                        <option value="SCOTT">SCOTT (Kimberly-Clark)</option>
+                        <option value="SCOTT">SCOTT (Papel Higiénico/Toalla)</option>
                         <option value="ROSAL">ROSAL</option>
                         <option value="NUBE BLANCA">NUBE BLANCA</option>
-                        <option value="ENCANTO">ENCANTO</option>
-                        <option value="NEVAX">NEVAX</option>
-                        <option value="ELITE">ELITE</option>
-                        <option value="KIMBERLY CLARK">KIMBERLY CLARK (Institucional)</option>
+                        <option value="RINSO">RINSO</option>
+                        <option value="XEDEX">XEDEX</option>
+                        <option value="AXION">AXION (Lavacrastes)</option>
+                        <option value="MAGIA BLANCA">MAGIA BLANCA (Lejía)</option>
+                        <option value="SUAVITEL">SUAVITEL / DOWNY</option>
+                        <option value="DESECHABLES">DESECHABLES (Platos/Vasos/Servilletas)</option>
                     </optgroup>
-                    <option value="VARIOS">VARIOS / GENERIGO</option>
+                    <optgroup label="OTROS">
+                        <option value="VARIOS">OTRA MARCA / GENÉRICO</option>
+                    </optgroup>
                 </select>
                 <input type="number" id="quantity" placeholder="Cantidad">
                 <select id="unit">
