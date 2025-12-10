@@ -95,6 +95,13 @@
         }
         .btn-edit { background-color: #03A9F4; color: white; }
         .btn-delete { background-color: #f44336; color: white; }
+        .category-title {
+            background-color: #333;
+            color: #FF9800;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 25px;
+        }
     </style>
 </head>
 <body>
@@ -143,20 +150,8 @@
 
         <div class="inventory-container">
             <h2>Stock Actual</h2>
-            <div style="overflow-x:auto;">
-                <table id="inventory-table">
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Nombre</th>
-                            <th>Categoría</th>
-                            <th>Cantidad Actual</th>
-                            <th>Unidad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="inventory-body"></tbody>
-                </table>
+            <div id="inventory-display" style="overflow-x:auto;">
+                <!-- El inventario agrupado se generará aquí -->
             </div>
         </div>
     </div>
@@ -184,7 +179,6 @@
         const quantityInput = document.getElementById('quantity');
         const unitInput = document.getElementById('unit');
         const addUpdateBtn = document.getElementById('add-update-btn');
-        const inventoryBody = document.getElementById('inventory-body');
         const tempLoadBtn = document.getElementById('temp-load-btn');
         const scanBtn = document.getElementById('scan-btn');
         const readerDiv = document.getElementById('reader');
@@ -338,26 +332,61 @@
         addUpdateBtn.addEventListener('click', addOrUpdateItem);
 
         inventoryCollection.orderBy("category").orderBy("name").onSnapshot(snapshot => {
-            inventoryBody.innerHTML = '';
+            const inventoryDisplay = document.getElementById('inventory-display');
+            inventoryDisplay.innerHTML = '';
+
+            const itemsByCategory = {};
             snapshot.forEach(doc => {
                 const item = { id: doc.id, ...doc.data() };
-                const row = document.createElement('tr');
-                if (item.quantity < 5 && item.unit !== 'porcentaje') {
-                    row.classList.add('low-stock');
+                if (!itemsByCategory[item.category]) {
+                    itemsByCategory[item.category] = [];
                 }
-                row.innerHTML = `
-                    <td>${item.id}</td>
-                    <td>${item.name}</td>
-                    <td>${item.category}</td>
-                    <td>${item.quantity}</td>
-                    <td>${item.unit}</td>
-                    <td>
-                        <button class="action-btn btn-edit" onclick="editItem('${item.id}')">Editar</button>
-                        <button class="action-btn btn-delete" onclick="deleteItem('${item.id}')">Borrar</button>
-                    </td>
-                `;
-                inventoryBody.appendChild(row);
+                itemsByCategory[item.category].push(item);
             });
+
+            const categoryOrder = Object.keys(itemsByCategory).sort();
+
+            for (const category of categoryOrder) {
+                const categoryTitle = document.createElement('h3');
+                categoryTitle.className = 'category-title';
+                categoryTitle.textContent = category;
+                inventoryDisplay.appendChild(categoryTitle);
+
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Cantidad Actual</th>
+                            <th>Unidad</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                `;
+                
+                const tbody = table.querySelector('tbody');
+                itemsByCategory[category].forEach(item => {
+                    const row = document.createElement('tr');
+                    if (item.quantity < 5 && item.unit !== 'porcentaje') {
+                        row.classList.add('low-stock');
+                    }
+                    row.innerHTML = `
+                        <td>${item.id}</td>
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.unit}</td>
+                        <td>
+                            <button class="action-btn btn-edit" onclick="editItem('${item.id}')">Editar</button>
+                            <button class="action-btn btn-delete" onclick="deleteItem('${item.id}')">Borrar</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                inventoryDisplay.appendChild(table);
+            }
         }, error => { console.error("Error de índice:", error); alert("⚠️ Falta crear el índice en Firebase. Revisa la consola (F12) para ver el link."); });
 
         window.editItem = async (id) => {

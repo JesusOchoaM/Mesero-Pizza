@@ -439,15 +439,16 @@ document.addEventListener('DOMContentLoaded', () => {
         items: [
             // Frías
             { nombre: "Coca Cola / Sabores Lata", desc: "Bebida fría", precio: 1.25 },
-            { nombre: "Pepsi 1.25L", desc: "Botella", precio: 1.75 },
-            { nombre: "Agua Botella", desc: "Natural", precio: 0.75 },
+            { nombre: "Pepsi 1.25L", desc: "Botella", precio: 1.75, ingredientes: { 'coca-cola-lata-uni': 1 } },
+            { nombre: "Agua Botella", desc: "Natural", precio: 0.75, ingredientes: { 'agua-embotellada-uni': 1 } },
             { nombre: "Refresco Natural de Horchata / Cebada / Sandía / Fresa / Piña", desc: "Refresco Natural", precio: 1.75 },
             { nombre: "Jugo de Naranja", desc: "Natural", precio: 1.99 },
             // Calientes
             { nombre: "Café Negro / Té", desc: "Caliente", precio: 1.00 },
             { nombre: "Café con Leche", desc: "Caliente", precio: 1.50 },
             // Alcohol
-            { nombre: "Cerveza Pilsener / Cerveza Golden", desc: "Botella", precio: 1.75 },
+            { nombre: "Cerveza Pilsener", desc: "Botella", precio: 1.75, ingredientes: { 'cerveza-pilsener-uni': 1 } },
+            { nombre: "Cerveza Golden", desc: "Botella", precio: 1.75, ingredientes: { 'cerveza-golden-uni': 1 } },
             { nombre: "Mix Michelada", desc: "Preparado", precio: 1.50 },
             { nombre: "Coctel de Tequila / Coctel de Ron / Coctel de Vodka", desc: "Variedad", precio: 3.50 },
             // Especiales
