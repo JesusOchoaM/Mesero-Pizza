@@ -107,6 +107,9 @@
 <body>
 
     <div class="container">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button id="ai-analysis-btn" style="background: linear-gradient(90deg, #8A2BE2, #00BFFF); color: white; border: none; padding: 15px 30px; border-radius: 50px; font-size: 1.2rem; cursor: pointer; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00BFFF;">🤖 Analizar Inventario con IA</button>
+        </div>
         <h1>📦 Gestión de Inventario</h1>
         <div style="text-align: center; margin-bottom: 20px;">
             <button id="temp-load-btn" style="background-color: #f44336; color: white; width: auto; padding: 10px 20px;">⚡ Cargar Inventario Completo</button>
@@ -118,7 +121,8 @@
                     <input type="text" id="barcode" placeholder="Código de Barra" autofocus>
                     <button id="scan-btn">📷 Escanear</button>
                 </div>
-                <input type="text" id="product-name" placeholder="Nombre del Producto">
+                <input type="text" id="product-name" placeholder="Nombre del Producto" list="catalog-list">
+                <datalist id="catalog-list"></datalist>
                 <select id="category">
                     <option value="SIGMA">SIGMA</option>
                     <option value="LACTOSA">LACTOSA</option>
@@ -289,10 +293,11 @@
                     unitInput.value = data.unit;
                     quantityInput.focus();
                 } else {
+                    // Si no existe, prepara para ingreso manual y pone foco en el nombre
                     nameInput.value = '';
-                    categoryInput.value = 'SIGMA';
+                    categoryInput.value = 'VARIOS (Generico)'; // O un valor por defecto
                     unitInput.value = 'uni';
-                    nameInput.focus();
+                    nameInput.focus(); // <-- FOCO AUTOMÁTICO
                 }
             }
         });
@@ -428,6 +433,90 @@
                 await inventoryCollection.doc(id).delete();
             }
         };
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const catalogList = document.getElementById('catalog-list');
+            const aiAnalysisBtn = document.getElementById('ai-analysis-btn');
+
+            const localProducts = [
+                "Churritos Diana", "Nachos Diana", "Elotitos Diana", "Tortillitas Diana", "Pizzerolas Diana",
+                "Bocadeli Nachos", "Bocadeli Frijoli Chips", "Bocadeli Papas Onduladas",
+                "Cerveza Pilsener", "Cerveza Regia", "Cerveza Suprema", "Cerveza Golden",
+                "Coca Cola", "Kolashampan", "Pepsi", "Mirinda", "7up",
+                "Leche Salud", "Yogurt Sula", "Leche Leyde", "Queso Crio",
+                "Jugo del Valle", "Jugo Petit",
+                "Boquitas Diana Variedad",
+                "Queso Mozzarella", "Queso Duro Blando", "Queso Oaxaca",
+                "Cafe Riko", "Cafe Listo"
+            ];
+
+            localProducts.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product;
+                catalogList.appendChild(option);
+            });
+
+            const analizarInventarioIA = () => {
+                const rows = document.querySelectorAll('#inventory-display tbody tr');
+                let criticos = 0;
+                let exceso = 0;
+                let valorTotal = 0;
+                let productosCriticos = [];
+                let hayCervezasBajas = false;
+                let hayQuesoBajo = false;
+
+                rows.forEach(row => {
+                    const quantity = parseFloat(row.cells[2].textContent);
+                    const name = row.cells[1].textContent.toLowerCase();
+                    const id = row.cells[0].textContent.toLowerCase();
+
+                    if (!isNaN(quantity)) {
+                        if (quantity < 5) {
+                            criticos++;
+                            productosCriticos.push(row.cells[1].textContent);
+                        }
+                        if (quantity > 50) {
+                            exceso++;
+                        }
+                        valorTotal += quantity; 
+
+                        if (name.includes('cerveza') && quantity < 10) {
+                            hayCervezasBajas = true;
+                        }
+                        if (id.includes('queso') && quantity < 2) {
+                            hayQuesoBajo = true;
+                        }
+                    }
+                });
+
+                let consejo = "Todo parece en orden.";
+                if (hayCervezasBajas) {
+                    consejo = "Se detecta bajo inventario de cervezas. Sugerencia: Preparar pedido a La Constancia para el fin de semana.";
+                }
+                if (hayQuesoBajo) {
+                    consejo = "¡Alerta de cocina! Niveles de queso son críticos. Hay riesgo de parar la producción de pizzas y pupusas.";
+                }
+
+                const analisis = `
+                    Análisis de Inventario con IA completado:
+                    - Productos Críticos (<5 unidades): ${criticos}
+                    - Productos en Exceso (>50 unidades): ${exceso}
+                    - Total de Items: ${valorTotal.toFixed(2)}
+                    
+                    Consejo Inteligente: ${consejo}
+                `;
+
+                alert(analisis);
+
+                if ('speechSynthesis' in window) {
+                    const mensaje = new SpeechSynthesisUtterance(analisis);
+                    window.speechSynthesis.speak(mensaje);
+                }
+            };
+
+            aiAnalysisBtn.addEventListener('click', analizarInventarioIA);
+        });
     </script>
 </body>
 </html>
