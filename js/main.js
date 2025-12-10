@@ -1,4 +1,24 @@
+let currentUser = null;
 document.addEventListener('DOMContentLoaded', () => {
+    const loginOverlay = document.getElementById('login-overlay');
+    const appContainer = document.getElementById('app-container');
+    const loginBtn = document.getElementById('btn-login');
+    loginBtn.addEventListener('click', async () => {
+        const user = document.getElementById('login-user').value.trim();
+        const pass = document.getElementById('login-pass').value.trim();
+        
+        // Consulta a Firebase (Colección 'usuarios')
+        const snapshot = await db.collection('usuarios').where('usuario', '==', user).where('clave', '==', pass).get();
+        
+        if (!snapshot.empty) {
+            currentUser = snapshot.docs[0].data().nombre; // Guardamos el nombre real (ej: 'Juan Perez')
+            loginOverlay.style.display = 'none';
+            appContainer.style.display = 'block';
+            alert(`¡Bienvenido al turno, ${currentUser}! 🍕`);
+        } else {
+            document.getElementById('login-error').style.display = 'block';
+        }
+    });
     const menuItemsContainer = document.getElementById('menu-items');
     const orderItemsContainer = document.getElementById('order-items');
     const orderTotalElement = document.getElementById('order-total');
@@ -70,7 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
             nota: isDelivery ? document.getElementById('address').value : '',
             metodoPago: metodoPago,
             pagoCon: !isNaN(pagoCon) ? pagoCon : null,
-            cambio: cambio
+            cambio: cambio,
+            mesero: currentUser,
         };
 
         try {
