@@ -118,7 +118,7 @@
         <div class="form-container">
             <div id="inventory-form" class="form-grid">
                 <div class="barcode-container">
-                    <input type="text" id="barcode" placeholder="Código de Barra" autofocus>
+                    <input type="text" id="barcode" placeholder="Código (o deja vacío para generar auto)" autofocus>
                     <button id="scan-btn">📷 Escanear</button>
                 </div>
                 <input type="text" id="product-name" placeholder="Nombre del Producto" list="catalog-list">
@@ -325,11 +325,22 @@
         });
         
         const addOrUpdateItem = async () => {
-            const barcode = barcodeInput.value.trim();
+            let barcode = barcodeInput.value.trim();
             const name = nameInput.value.trim();
             const category = categoryInput.value;
             const quantity = parseFloat(quantityInput.value);
             const unit = unitInput.value;
+
+            if (barcode === '' && name !== '') {
+                const generatedBarcode = name.toLowerCase()
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita tildes
+                    .replace(/[^a-z0-9\s-]/g, '') // Quita símbolos raros
+                    .replace(/\s+/g, '-'); // Reemplaza espacios por guiones
+                
+                barcode = generatedBarcode;
+                barcodeInput.value = barcode;
+                console.log(`✨ Código generado automáticamente: ${barcode}`);
+            }
 
             if (!barcode || !name || isNaN(quantity)) {
                 alert('Por favor, completa Código, Nombre y Cantidad.');
