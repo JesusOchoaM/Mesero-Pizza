@@ -185,8 +185,8 @@
         </h1>
     
         <nav style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-            <button id="verHistorialBtn" onclick="mostrarHistorial()" style="background: transparent; border: 1px solid #03A9F4; color: #03A9F4; padding: 5px 15px; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 0.9rem; width: auto;">
-                📜 Historial
+            <button id="verHistorialBtn" onclick="realizarCierreCaja()" style="background: transparent; border: 1px solid #03A9F4; color: #03A9F4; padding: 5px 15px; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 0.9rem; width: auto;">
+                💰 Realizar Cierre de Caja del Día
             </button>
             <a href="index.html" style="color: #FF9800; text-decoration: none; font-weight: bold; border: 1px solid #FF9800; padding: 5px 15px; border-radius: 15px; font-size: 0.9rem; display: inline-block;">
                 🍕 Ir a Pedidos
@@ -197,12 +197,17 @@
         </nav>
     </div>
 
-    <!-- Modal de Historial -->
+    <!-- Modal de Cierre de Caja -->
     <div id="historialModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="cerrarHistorial()">&times;</span>
-            <h2>Historial de Ventas</h2>
-            <button id="descargarCsvBtn" onclick="descargarReporte()">📥 Descargar Reporte en Excel (CSV)</button>
+            <h2>Cierre de Caja del Día</h2>
+            <button id="descargarCsvBtn" onclick="descargarReporteDia()">📥 Descargar Cierre de Caja (CSV)</button>
+            <button id="borrarVentasBtn" onclick="borrarVentasDelDia()" style="background-color: #c0392b; color: white; margin-left: 10px; padding: 10px 20px; font-size: 1rem; border-radius: 5px; cursor: pointer; border: none;">🗑️ Borrar Ventas de HOY (Reset Pruebas)</button>
+            
+            <!-- Contenedor para el Resumen Financiero -->
+            <div id="resumenFinanciero" style="margin-top: 20px;"></div>
+
             <div style="overflow-x:auto;">
                 <table id="tablaHistorial">
                     <thead>
@@ -396,42 +401,81 @@
             });
         };
 
-        // 3. Mostrar el modal con el historial
-        window.mostrarHistorial = function() {
+        // 3. Mostrar el modal con el resumen del día
+        window.realizarCierreCaja = async function() {
             const modal = document.getElementById('historialModal');
             const tbody = document.getElementById('historialBody');
-            tbody.innerHTML = '<tr><td colspan="5">Cargando historial...</td></tr>';
+            const resumenDiv = document.getElementById('resumenFinanciero');
+            
             modal.style.display = 'block';
+            tbody.innerHTML = '<tr><td colspan="5">Cargando cierre del día...</td></tr>';
+            resumenDiv.innerHTML = '';
 
-            db.collection("historial_ventas")
-              .orderBy("fechaArchivado", "desc")
-              .limit(10)
-              .get()
-              .then((querySnapshot) => {
-                  tbody.innerHTML = ''; // Limpiar la tabla
-                  if (querySnapshot.empty) {
-                      tbody.innerHTML = '<tr><td colspan="5">No hay pedidos en el historial.</td></tr>';
-                      return;
-                  }
-                  querySnapshot.forEach(doc => {
-                      const data = doc.data();
-                      const itemsStr = data.items.map(item => `${item.quantity}x ${item.name}`).join(', ');
-                      const fecha = data.fechaArchivado ? data.fechaArchivado.toDate().toLocaleString('es-ES') : 'N/A';
-                      
-                      const row = `<tr>
-                          <td>${fecha}</td>
-                          <td>${data.mesa}</td>
-                          <td>$${data.total.toFixed(2)}</td>
-                          <td>${data.metodoPago}</td>
-                          <td>${itemsStr}</td>
-                      </tr>`;
-                      tbody.innerHTML += row;
-                  });
-              })
-              .catch(error => {
-                  console.error("Error al cargar el historial: ", error);
-                  tbody.innerHTML = '<tr><td colspan="5">Error al cargar el historial.</td></tr>';
-              });
+            // 1. Definir Rango de Hoy
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            const manana = new Date(hoy);
+            manana.setDate(manana.getDate() + 1);
+
+            try {
+                // 2. Consultar Firebase
+                const snapshot = await db.collection('historial_ventas')
+                    .where('fechaArchivado', '>=', hoy)
+                    .where('fechaArchivado', '<', manana)
+                    .orderBy('fechaArchivado', 'desc')
+                    .get();
+
+                // 3. Calcular Totales y preparar datos
+                let totalEfectivo = 0, totalTarjeta = 0, totalTransferencia = 0;
+                let pedidos = [];
+                tbody.innerHTML = ''; // Limpiar la tabla antes de llenar
+
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="5">No hay ventas registradas hoy.</td></tr>';
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    pedidos.push(data);
+
+                    if(data.metodoPago === 'Efectivo') totalEfectivo += data.total;
+                    else if(data.metodoPago === 'Tarjeta') totalTarjeta += data.total;
+                    else if(data.metodoPago === 'Transferencia') totalTransferencia += data.total;
+
+                    // Llenar la tabla del modal con los detalles
+                    const itemsStr = data.items.map(item => `${item.quantity}x ${item.name}`).join(', ');
+                    const fecha = data.fechaArchivado ? data.fechaArchivado.toDate().toLocaleString('es-ES') : 'N/A';
+                    const row = `<tr>
+                      <td>${fecha}</td>
+                      <td>${data.mesa}</td>
+                      <td>$${data.total.toFixed(2)}</td>
+                      <td>${data.metodoPago}</td>
+                      <td>${itemsStr}</td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                });
+
+                const granTotal = totalEfectivo + totalTarjeta + totalTransferencia;
+
+                // 4. Mostrar Resumen en HTML
+                let resumenHTML = `
+                    <div style="display: flex; gap: 20px; justify-content: space-around; margin-bottom: 20px; background: #333; padding: 15px; border-radius: 8px;">
+                        <div style="color: #2ecc71;">💵 Efectivo: $${totalEfectivo.toFixed(2)}</div>
+                        <div style="color: #3498db;">💳 Tarjeta: $${totalTarjeta.toFixed(2)}</div>
+                        <div style="color: #9b59b6;">🏦 Transf.: $${totalTransferencia.toFixed(2)}</div>
+                        <div style="color: #FF9800; font-weight: bold;">💰 TOTAL: $${granTotal.toFixed(2)}</div>
+                    </div>
+                `;
+                resumenDiv.innerHTML = resumenHTML;
+
+                // 5. Guardar datos para la descarga
+                window.pedidosDelDia = pedidos;
+                window.totalesDelDia = { totalEfectivo, totalTarjeta, totalTransferencia, granTotal };
+
+            } catch (error) {
+                console.error("Error al realizar el cierre de caja: ", error);
+                tbody.innerHTML = '<tr><td colspan="5">Error al cargar los datos. Revisa la consola.</td></tr>';
+            }
         };
 
         // 4. Cerrar el modal
@@ -439,59 +483,107 @@
             document.getElementById('historialModal').style.display = 'none';
         };
 
-        // 5. Descargar reporte CSV
-        window.descargarReporte = async function() {
-            try {
-                const snapshot = await db.collection('historial_ventas').orderBy('fechaArchivado', 'desc').get();
-                
-                if (snapshot.empty) {
-                    alert("No hay historial para descargar.");
-                    return;
-                }
-            // 1. Encabezados con Punto y Coma
-            let csvContent = "Fecha;Hora;Mesa;Cliente;Metodo Pago;Total;Items\n";
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                
-                // 2. Formatear Fecha y Hora
+        // 5. Descargar reporte CSV del día
+        window.descargarReporteDia = function() {
+            if (!window.pedidosDelDia || window.pedidosDelDia.length === 0) {
+                alert("No hay datos para descargar hoy.");
+                return;
+            }
+            let csv = "\uFEFF"; // BOM para acentos
+
+            // SECCIÓN 1: RESUMEN
+            csv += "REPORTE DE CIERRE DE CAJA;" + new Date().toLocaleDateString('es-ES') + "\n";
+            csv += "METODO;TOTAL RECAUDADO\n";
+            csv += "Efectivo;$" + window.totalesDelDia.totalEfectivo.toFixed(2) + "\n";
+            csv += "Tarjeta;$" + window.totalesDelDia.totalTarjeta.toFixed(2) + "\n";
+            csv += "Transferencia;$" + window.totalesDelDia.totalTransferencia.toFixed(2) + "\n";
+            csv += "TOTAL DIA;$" + window.totalesDelDia.granTotal.toFixed(2) + "\n\n";
+
+            // SECCIÓN 2: DETALLE (Agrupado)
+            csv += "DETALLE DE ORDENES POR TIPO DE PAGO\n";
+            csv += "Fecha;Hora;Mesa;Cliente;Metodo Pago;Total;Items\n";
+
+            // Ordenar por método de pago
+            const pedidosOrdenados = [...window.pedidosDelDia].sort((a, b) => {
+                const orden = { 'Efectivo': 1, 'Tarjeta': 2, 'Transferencia': 3 };
+                return (orden[a.metodoPago] || 99) - (orden[b.metodoPago] || 99);
+            });
+
+            pedidosOrdenados.forEach(data => {
                 let fecha = "N/A";
                 let hora = "N/A";
-                if (data.fechaArchivado) {
+                if (data.fechaArchivado && data.fechaArchivado.toDate) {
                     const dateObj = data.fechaArchivado.toDate();
-                    fecha = dateObj.toLocaleDateString();
-                    hora = dateObj.toLocaleTimeString();
-                }
-                // 3. Limpiar Items (reemplazar saltos de linea y comas)
-                let itemsString = "";
-                if (data.items) {
-                    itemsString = data.items.map(i => `${i.quantity}x ${i.name}`).join(" | ");
+                    fecha = dateObj.toLocaleDateString('es-ES');
+                    hora = dateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
                 }
                 
-                // 4. Construir la fila asegurando que no haya conflictos
+                const itemsString = data.items.map(i => `${i.quantity}x ${i.name}`).join(" | ");
+
                 const row = [
                     fecha,
                     hora,
                     data.mesa,
-                    (data.apellido || "Cliente").replace(/;/g, ""), // Quitar punto y comas del nombre
+                    (data.apellido || "Cliente").replace(/;/g, ""),
                     data.metodoPago || "N/A",
                     data.total.toFixed(2),
                     itemsString
                 ];
-                csvContent += row.join(";") + "\n";
+                csv += row.join(";") + "\n";
             });
-            // 5. Descargar con BOM para acentos (Universal BOM)
-            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
+
+            // Descargar
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", "Reporte_Ventas_Pizza.csv");
-            document.body.appendChild(link);
+            link.href = URL.createObjectURL(blob);
+            link.download = `Cierre_Caja_${new Date().toLocaleDateString('es-ES').replace(/\//g, '-')}.csv`;
             link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error("Error al descargar:", error);
-            alert("Error al generar el reporte");
-        }
+            URL.revokeObjectURL(link.href);
+        };
+
+        // 6. Borrar ventas del día
+        window.borrarVentasDelDia = async function() {
+            if (!confirm("¿Estás seguro de que quieres borrar TODAS las ventas registradas HOY? Esta acción es para limpiar pruebas.")) {
+                return;
+            }
+            if (!confirm("Confirmación final: ¿REALMENTE quieres proceder? Esta acción no se puede deshacer.")) {
+                return;
+            }
+
+            // Rango de fecha de HOY
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            const manana = new Date(hoy);
+            manana.setDate(manana.getDate() + 1);
+
+            try {
+                // Buscar documentos en el rango
+                const snapshot = await db.collection('historial_ventas')
+                    .where('fechaArchivado', '>=', hoy)
+                    .where('fechaArchivado', '<', manana)
+                    .get();
+
+                if (snapshot.empty) {
+                    alert("No hay ventas de prueba para borrar hoy.");
+                    return;
+                }
+
+                // Borrar documentos en un batch
+                const batch = db.batch();
+                snapshot.docs.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+
+                alert('✅ Se han eliminado las pruebas del día.');
+                
+                // Recargar la vista del modal para que muestre $0.00
+                realizarCierreCaja();
+
+            } catch (error) {
+                console.error("Error al borrar las ventas del día: ", error);
+                alert("Hubo un error al intentar borrar los datos. Revisa la consola.");
+            }
         };
     </script>
 </body>
