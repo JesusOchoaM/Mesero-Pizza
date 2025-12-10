@@ -75,6 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             await db.collection('pedidos_activos').doc(docId).set(orderData);
+
+            // Descontar del inventario
+            descontarInventario(order).catch(err => console.error("Error inventario:", err));
             
             alert('✅ Pedido enviado a Cocina');
             resetOrderBtn.click();
@@ -398,8 +401,8 @@ document.addEventListener('DOMContentLoaded', () => {
             { 
                 nombre: "Pepsi 1.25L", 
                 desc: "Botella", 
-                precio: 1.75 
-                // (Si tienes Pepsi en inventario, agrega su ingrediente aquí)
+                precio: 1.75,
+                ingredientes: { 'pepsi-1-25l': 1 }
             },
             { 
                 nombre: "Refresco Natural", 
@@ -415,8 +418,8 @@ document.addEventListener('DOMContentLoaded', () => {
             { nombre: "Café Negro / Té", desc: "Caliente", precio: 1.00 },
             { nombre: "Café con Leche", desc: "Caliente", precio: 1.50 },
             // Alcohol
-            { nombre: "Cerveza Pilsener", desc: "Botella", precio: 1.75, ingredientes: { 'cerveza-pilsener-uni': 1 } },
-            { nombre: "Cerveza Golden", desc: "Botella", precio: 1.75, ingredientes: { 'cerveza-golden-uni': 1 } },
+            { nombre: "Cerveza Pilsener", desc: "Botella", precio: 1.75, ingredientes: { 'cerveza-pilsener': 1 } },
+            { nombre: "Cerveza Golden", desc: "Botella", precio: 1.75, ingredientes: { 'cerveza-golden': 1 } },
             { nombre: "Mix Michelada", desc: "Preparado", precio: 1.50 },
             { nombre: "Coctel de Tequila / Coctel de Ron / Coctel de Vodka", desc: "Variedad", precio: 3.50 },
             // Especiales
@@ -862,4 +865,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+// --- FUNCIÓN PARA DESCONTAR INVENTARIO ---
+async function descontarInventario(items) {
+    const batch = db.batch();
+    let hayDescuentos = false;
+for (const item of items) {
+    // Buscamos el item en el menú para ver sus ingredientes
+    const menuItem = menu.flatMap(cat => cat.items).find(i => i.nombre === item.name || item.name.startsWith(i.nombre));
+    
+    if (menuItem && menuItem.ingredientes) {
+        for (const [ingredienteId, cantidadRequerida] of Object.entries(menuItem.ingredientes)) {
+            const cantidadTotal = cantidadRequerida * item.quantity;
+            const itemRef = db.collection('inventario').doc(ingredienteId);
+            
+            // Restar usando incremento negativo (es atómico y seguro)
+            batch.update(itemRef, { 
+                quantity: firebase.firestore.FieldValue.increment(-cantidadTotal) 
+            });
+            hayDescuentos = true;
+            console.log(`Descontando ${cantidadTotal} de ${ingredienteId}`);
+        }
+    }
+}
+if (hayDescuentos) {
+    await batch.commit();
+}
+}
 });
