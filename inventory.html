@@ -111,9 +111,6 @@
             <button id="ai-analysis-btn" style="background: linear-gradient(90deg, #8A2BE2, #00BFFF); color: white; border: none; padding: 15px 30px; border-radius: 50px; font-size: 1.2rem; cursor: pointer; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00BFFF;">🤖 Analizar Inventario con IA</button>
         </div>
         <h1>📦 Gestión de Inventario</h1>
-        <div style="text-align: center; margin-bottom: 20px;">
-            <button id="temp-load-btn" style="background-color: #f44336; color: white; width: auto; padding: 10px 20px;">⚡ Cargar Inventario Completo</button>
-        </div>
 
         <div class="form-container">
             <div id="inventory-form" class="form-grid">
@@ -124,16 +121,29 @@
                 <input type="text" id="product-name" placeholder="Nombre del Producto" list="catalog-list">
                 <datalist id="catalog-list"></datalist>
                 <select id="category">
-                    <option value="SIGMA">SIGMA</option>
-                    <option value="LACTOSA">LACTOSA</option>
-                    <option value="MULTI CONGELADOS">MULTI CONGELADOS</option>
-                    <option value="SELLO DE ORO">SELLO DE ORO</option>
                     <option value="PRICE SMART">PRICE SMART</option>
-                    <option value="VARIOS (Generico)">VARIOS (Generico)</option>
-                    <option value="LA SABROSURA">LA SABROSURA</option>
                     <option value="SUPER SELECTOS">SUPER SELECTOS</option>
-                    <option value="BEBIDAS Y CERVEZAS">BEBIDAS Y CERVEZAS</option>
-                    <option value="VERDURAS Y OTROS">VERDURAS Y OTROS</option>
+                    <option value="DESPENSA DE DON JUAN">DESPENSA DE DON JUAN</option>
+                    <option value="EL MERCADO">EL MERCADO (Frutas/Verduras)</option>
+                    <option value="LA CONSTANCIA">LA CONSTANCIA (CocaCola, Pilsener, Cristal)</option>
+                    <option value="CBC">CBC (Pepsi, 7Up, Gatorade)</option>
+                    <option value="INDUSTRIAS LA CASCADA">LA CASCADA (SalvaCola, Kolashampan)</option>
+                    <option value="SIGMA">SIGMA / TOLEDO</option>
+                    <option value="CRIO">CRIO</option>
+                    <option value="SELLO DE ORO">SELLO DE ORO</option>
+                    <option value="POLLO INDIO">POLLO INDIO</option>
+                    <option value="LACTOSA">LACTOSA (Sula, Salud)</option>
+                    <option value="DOS PINOS">DOS PINOS</option>
+                    <option value="FOREMOST">FOREMOST</option>
+                    <option value="PETACONES">QUESOS PETACONES</option>
+                    <option value="PRODUCTOS DIANA">PRODUCTOS DIANA</option>
+                    <option value="BOCADELI">BOCADELI</option>
+                    <option value="BIMBO">BIMBO / BREDDY</option>
+                    <option value="PAN LIDO">PAN LIDO</option>
+                    <option value="PAN SINAI">PAN SINAÍ</option>
+                    <option value="MASECA">MASECA / GRUMA</option>
+                    <option value="LA SABROSURA">LA SABROSURA</option>
+                    <option value="VARIOS">VARIOS / GENERIGO</option>
                 </select>
                 <input type="number" id="quantity" placeholder="Cantidad">
                 <select id="unit">
@@ -183,7 +193,6 @@
         const quantityInput = document.getElementById('quantity');
         const unitInput = document.getElementById('unit');
         const addUpdateBtn = document.getElementById('add-update-btn');
-        const tempLoadBtn = document.getElementById('temp-load-btn');
         const scanBtn = document.getElementById('scan-btn');
         const readerDiv = document.getElementById('reader');
 
@@ -236,48 +245,7 @@
             } catch (e) { console.warn("No se pudo reproducir sonido de bip.") }
         }
 
-        tempLoadBtn.addEventListener('click', async () => {
-            if (!confirm("¿Estás seguro de que quieres cargar el inventario completo? Esto puede sobrescribir datos existentes.")) {
-                return;
-            }
 
-            const inventoryBySupplier = {
-                "SIGMA": ["Chorizo (uni)", "Peperoni (lb)", "Jamón ahumado (lb)", "Jamón pavo (bandeja)", "Tocino (uni)", "Salchicha con queso (paq)"],
-                "LACTOSA": ["Queso mozzarella (lb)", "Queso amarillo (uni)", "Crema (uni)", "Yogurt (uni)"],
-                "MULTI CONGELADOS": ["Papas (lb)", "Nuguet pollo (uni)", "Pan hamburguesa (uni)", "Pechugas (orden)", "Tacos (orden)"],
-                "SELLO DE ORO": ["Alitas (bolsa)", "Nuguet pollo Sello Oro (uni)", "Tacos Sello Oro (orden)"],
-                "PRICE SMART": ["Camarones (uni)", "Deditos de queso (orden)", "Pollo (uni)", "Costilla (orden)", "BBQ (uni)", "Búfalo (uni)", "Ranch (uni)", "Ketchup (uni)", "Ketchup bolsita (uni)", "Aluminio (porcentaje)", "Mayonesa (uni)", "Margarina (uni)", "Agua (uni)", "Salsa pizza (lata)", "Aceite (porcentaje)", "Aceitunas (porcentaje)", "Hongos (porcentaje)", "KS (uni)", "Azúcar (libra)", "Sal (libra)", "Limón (uni)"],
-                "VARIOS (Generico)": ["Harina pan cake (porcentaje)", "Nutella (uni)", "Hershey (uni)", "Chantilly (porcentaje)", "Salsa negra (porcentaje)", "Mostaza (porcentaje)", "Jugo de Naranja (porcentaje)", "Leche (porcentaje)", "Salsa Alfredo (uni)", "Wantan (orden)"],
-                "LA SABROSURA": ["Cajas (uni)", "Queso parmesano (uni)", "Chile escamas (uni)"],
-                "SUPER SELECTOS": ["Pan hot dog (bolsa)", "Pan caja (porcentaje)", "Frijoles (lb)", "Café (uni)", "Harina de arroz (lb)", "Harina maiz (lb)", "Carne molida H. (uni)", "Maicena (porcentaje)", "Consome pollo (uni)", "Consome carne (uni)", "Sopas Maggi (uni)", "Maruchan (uni)", "Lasaña (orden)", "Caja lasaña (uni)", "Miel de maple (porcentaje)", "Granola (porcentaje)", "Avena (porcentaje)", "Huevos (uni)", "Caramelo Hershey (uni)", "Dulce de leche (porcentaje)", "Toallas húmedas (uni)"],
-                "BEBIDAS Y CERVEZAS": [ "Coca Cola lata (uni)", "Coca Cola vidrio (uni)", "Kolashampan lata (uni)", "Agua embotellada (uni)", "Cerveza Pilsener (uni)", "Cerveza Golden (uni)" ], 
-                "VERDURAS Y OTROS": [ "Tomate (lb)", "Cebolla blanca (lb)", "Cebolla morada (lb)", "Chile verde (uni)", "Hongos frescos (lb)", "Ajo (cabeza)" ]
-            };
-
-            const batch = db.batch();
-            const regex = /(.*) \((.*)\)/;
-
-            for (const category in inventoryBySupplier) {
-                for (const productString of inventoryBySupplier[category]) {
-                    const match = productString.match(regex);
-                    if (match) {
-                        const name = match[1].trim();
-                        const unit = match[2].trim();
-                        const docId = name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
-                        const docRef = inventoryCollection.doc(docId);
-                        batch.set(docRef, { name, category, unit, quantity: 0 });
-                    }
-                }
-            }
-
-            try {
-                await batch.commit();
-                alert('¡Inventario completo cargado con éxito! Todos los items se inicializaron con cantidad 0.');
-            } catch (error) {
-                console.error("Error al cargar la lista: ", error);
-                alert('Hubo un error al cargar la lista. Revisa la consola.');
-            }
-        });
 
         barcodeInput.addEventListener('keypress', async (e) => {
             if (e.key === 'Enter') {
