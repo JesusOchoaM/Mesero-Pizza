@@ -438,11 +438,46 @@ document.addEventListener('DOMContentLoaded', () => {
         categoria: "Bebidas y Postres",
         items: [
             // Frías
-            { nombre: "Coca Cola / Sabores Lata", desc: "Bebida fría", precio: 1.25 },
-            { nombre: "Pepsi 1.25L", desc: "Botella", precio: 1.75, ingredientes: { 'coca-cola-lata-uni': 1 } },
-            { nombre: "Agua Botella", desc: "Natural", precio: 0.75, ingredientes: { 'agua-embotellada-uni': 1 } },
-            { nombre: "Refresco Natural de Horchata / Cebada / Sandía / Fresa / Piña", desc: "Refresco Natural", precio: 1.75 },
-            { nombre: "Jugo de Naranja", desc: "Natural", precio: 1.99 },
+            { 
+                nombre: "Coca Cola Lata", 
+                desc: "355ml", 
+                precio: 1.25,
+                ingredientes: { 'coca-cola-lata': 1 }
+            },
+            { 
+                nombre: "Coca Cola Vidrio", 
+                desc: "Botella de vidrio", 
+                precio: 1.25, 
+                ingredientes: { 'coca-cola-vidrio': 1 }
+            },
+            { 
+                nombre: "Kolashampan Lata", 
+                desc: "355ml", 
+                precio: 1.25,
+                ingredientes: { 'kolashampan-lata': 1 }
+            },
+            { 
+                nombre: "Agua Botella", 
+                desc: "Natural", 
+                precio: 0.75,
+                ingredientes: { 'agua-embotellada': 1 }
+            },
+            { 
+                nombre: "Pepsi 1.25L", 
+                desc: "Botella", 
+                precio: 1.75 
+                // (Si tienes Pepsi en inventario, agrega su ingrediente aquí)
+            },
+            { 
+                nombre: "Refresco Natural", 
+                desc: "Horchata / Cebada / Sandía / Fresa / Piña", 
+                precio: 1.75 
+            },
+            { 
+                nombre: "Jugo de Naranja", 
+                desc: "Natural", 
+                precio: 1.99 
+            },
             // Calientes
             { nombre: "Café Negro / Té", desc: "Caliente", precio: 1.00 },
             { nombre: "Café con Leche", desc: "Caliente", precio: 1.50 },
