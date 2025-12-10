@@ -106,6 +106,8 @@
 </head>
 <body>
 
+    <button id="btn-wipe-all" style="background-color: #f44336; color: white; padding: 15px; width: 100%; border: none; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-bottom: 20px;">🗑️ BORRAR TODO EL INVENTARIO (RESET)</button>
+
     <div class="container">
         <div style="text-align: center; margin-bottom: 20px;">
             <button id="ai-analysis-btn" style="background: linear-gradient(90deg, #8A2BE2, #00BFFF); color: white; border: none; padding: 15px 30px; border-radius: 50px; font-size: 1.2rem; cursor: pointer; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #00BFFF;">🤖 Analizar Inventario con IA</button>
@@ -484,6 +486,23 @@
             };
 
             aiAnalysisBtn.addEventListener('click', analizarInventarioIA);
+        });
+
+        document.getElementById('btn-wipe-all').addEventListener('click', async () => {
+            if (confirm('¿Seguro que quieres borrar TODO el inventario? Esta acción es irreversible.')) {
+                try {
+                    const querySnapshot = await inventoryCollection.get();
+                    const batch = db.batch();
+                    querySnapshot.forEach(doc => {
+                        batch.delete(doc.ref);
+                    });
+                    await batch.commit();
+                    alert('Inventario vaciado correctamente.');
+                } catch (error) {
+                    console.error("Error al vaciar el inventario: ", error);
+                    alert('Hubo un error al intentar vaciar el inventario.');
+                }
+            }
         });
     </script>
 </body>
