@@ -177,11 +177,24 @@
 </head>
 <body>
 
-    <img src="images/logo1.png" alt="Logo" style="width: 100px; height: auto; display: block; margin: 0 auto 15px auto;">
-    <h1>👨‍🍳 Pantalla de Cocina (KDS)</h1>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <img src="images/logo1.png" alt="Logo" style="width: 130px; height: auto; display: block; margin: 0 auto 10px auto;">
     
-    <div class="historial-btn-container">
-        <button id="verHistorialBtn" onclick="mostrarHistorial()">📜 Ver Historial / Descargar</button>
+        <h1 style="color: #FF9800; margin: 0 0 15px 0; border: none; text-transform: uppercase; letter-spacing: 2px;">
+            👨‍🍳 Pantalla de Cocina
+        </h1>
+    
+        <nav style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <button id="verHistorialBtn" onclick="mostrarHistorial()" style="background: transparent; border: 1px solid #03A9F4; color: #03A9F4; padding: 5px 15px; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 0.9rem; width: auto;">
+                📜 Historial
+            </button>
+            <a href="index.html" style="color: #FF9800; text-decoration: none; font-weight: bold; border: 1px solid #FF9800; padding: 5px 15px; border-radius: 15px; font-size: 0.9rem; display: inline-block;">
+                🍕 Ir a Pedidos
+            </a>
+            <a href="inventory.html" style="color: #FF9800; text-decoration: none; font-weight: bold; border: 1px solid #FF9800; padding: 5px 15px; border-radius: 15px; font-size: 0.9rem; display: inline-block;">
+                📦 Ir a Inventario
+            </a>
+        </nav>
     </div>
 
     <!-- Modal de Historial -->
