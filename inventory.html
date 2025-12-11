@@ -230,6 +230,7 @@
 
         <div class="inventory-container">
             <h2>Stock Actual</h2>
+            <input type="text" id="search-inventory" placeholder="🔍 Buscar producto en stock...">
             <div id="inventory-display" style="overflow-x:auto;">
                 <!-- El inventario agrupado se generará aquí -->
             </div>
@@ -805,6 +806,45 @@
                     alert('Hubo un error al eliminar el reporte.');
                 }
             });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('search-inventory');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', () => {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    const inventoryDisplay = document.getElementById('inventory-display');
+                    const categories = inventoryDisplay.querySelectorAll('.category-title');
+
+                    categories.forEach(category => {
+                        const table = category.nextElementSibling;
+                        const rows = table.querySelectorAll('tbody tr');
+                        let visibleRows = 0;
+
+                        rows.forEach(row => {
+                            const code = row.cells[0].textContent.toLowerCase();
+                            const name = row.cells[1].textContent.toLowerCase();
+
+                            if (code.includes(searchTerm) || name.includes(searchTerm)) {
+                                row.style.display = '';
+                                visibleRows++;
+                            } else {
+                                row.style.display = 'none';
+                            }
+                        });
+
+                        // Ocultar la categoría si no tiene filas visibles
+                        if (visibleRows === 0) {
+                            category.style.display = 'none';
+                            table.style.display = 'none';
+                        } else {
+                            category.style.display = '';
+                            table.style.display = '';
+                        }
+                    });
+                });
+            }
         });
     </script>
 </body>

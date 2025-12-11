@@ -464,3 +464,8 @@ h2 {
         padding: 1rem;
     }
 }
+
+#search-inventory {
+    width: 100%;
+    margin-bottom: 15px;
+}
