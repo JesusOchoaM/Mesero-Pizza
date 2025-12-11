@@ -395,8 +395,13 @@
                 await db.runTransaction(async (transaction) => {
                     const doc = await transaction.get(docRef);
                     if (doc.exists) {
-                        const newQuantity = (doc.data().quantity || 0) + quantity;
-                        transaction.update(docRef, { quantity: newQuantity });
+                        const newQuantity = quantity;
+                        transaction.update(docRef, { 
+                            name, 
+                            category, 
+                            quantity: newQuantity, 
+                            unit 
+                        });
                     } else {
                         transaction.set(docRef, { name, category, quantity, unit });
                     }
