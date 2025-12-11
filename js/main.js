@@ -1,5 +1,26 @@
 let currentUser = null;
 document.addEventListener('DOMContentLoaded', () => {
+// Verificar sesión automática al iniciar
+const usuarioLocal = localStorage.getItem('usuarioActivo');
+const usuarioSession = sessionStorage.getItem('usuarioActivo');
+const sesionGuardada = usuarioLocal || usuarioSession;
+
+if (sesionGuardada) {
+    currentUser = sesionGuardada;
+    loginOverlay.style.display = 'none';
+    appContainer.style.display = 'block';
+    console.log("Sesión restaurada para: " + currentUser);
+}
+
+// Función global para cerrar sesión
+window.cerrarSesion = function() {
+    if(confirm("¿Cerrar turno?")) {
+        localStorage.removeItem('usuarioActivo');
+        sessionStorage.removeItem('usuarioActivo');
+        location.reload();
+    }
+};
+
     const loginOverlay = document.getElementById('login-overlay');
     const appContainer = document.getElementById('app-container');
     const loginBtn = document.getElementById('btn-login');
@@ -11,7 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const snapshot = await db.collection('usuarios').where('usuario', '==', user).where('clave', '==', pass).get();
         
         if (!snapshot.empty) {
-            currentUser = snapshot.docs[0].data().nombre; // Guardamos el nombre real (ej: 'Juan Perez')
+            currentUser = snapshot.docs[0].data().nombre;
+            
+            // Verificamos si marcó la casilla "Mantener sesión"
+            const rememberMe = document.getElementById('remember-me').checked;
+            
+            if (rememberMe) {
+                localStorage.setItem('usuarioActivo', currentUser); // Guarda para siempre
+            } else {
+                sessionStorage.setItem('usuarioActivo', currentUser); // Guarda solo mientras el navegador esté abierto
+            }
+
             loginOverlay.style.display = 'none';
             appContainer.style.display = 'block';
             alert(`¡Bienvenido al turno, ${currentUser}! 🍕`);
@@ -914,3 +945,12 @@ if (hayDescuentos) {
 }
 }
 });
+
+// Función global para cerrar sesión
+window.cerrarSesion = function() {
+    if(confirm("¿Cerrar turno?")) {
+        localStorage.removeItem('usuarioActivo');
+        sessionStorage.removeItem('usuarioActivo');
+        location.reload();
+    }
+};
