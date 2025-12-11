@@ -115,6 +115,9 @@
                 <button id="ai-analysis-btn" style="background: transparent; border: 1px solid #8A2BE2; color: #8A2BE2; padding: 5px 15px; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 0.9rem; width: auto;">
                     🤖 Analizar con IA
                 </button>
+                <button id="close-day-btn" style="background: transparent; border: 1px solid #4CAF50; color: #4CAF50; padding: 5px 15px; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 0.9rem; width: auto;">
+                    📅 Cerrar Inventario del Día
+                </button>
                 <a href="index.html" style="color: #e74c3c; text-decoration: none; font-weight: bold; border: 1px solid #e74c3c; padding: 5px 15px; border-radius: 15px; font-size: 0.9rem;">
                     🍕 Ir a Pedidos
                 </a>
@@ -229,6 +232,34 @@
             <h2>Stock Actual</h2>
             <div id="inventory-display" style="overflow-x:auto;">
                 <!-- El inventario agrupado se generará aquí -->
+            </div>
+        </div>
+
+        <div class="inventory-container report-container">
+            <h2>📊 Reporte Semanal</h2>
+            <div class="report-controls" style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
+                <input type="date" id="week-picker" style="padding: 8px; background-color: #2c2c2c; color: #fff; border: 1px solid #333; border-radius: 5px;">
+                <button id="export-csv-btn" style="background-color: #2196F3; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none;">Exportar Semana a CSV</button>
+                <button id="delete-report-btn" style="background-color: #f44336; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; border: none;">🗑️ Eliminar Reporte Mostrado</button>
+            </div>
+            <div id="weekly-report" style="overflow-x:auto;">
+                <table id="report-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Lunes</th>
+                            <th>Martes</th>
+                            <th>Miércoles</th>
+                            <th>Jueves</th>
+                            <th>Viernes</th>
+                            <th>Sábado</th>
+                            <th>Domingo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-table-body">
+                        <!-- Las filas del reporte se generarán aquí -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -558,6 +589,222 @@
             };
 
             aiAnalysisBtn.addEventListener('click', analizarInventarioIA);
+        });
+    </script>
+
+    <script>
+        document.getElementById('close-day-btn').addEventListener('click', async () => {
+            if (!confirm('¿Estás seguro de que quieres cerrar el inventario del día? Esta acción guardará una copia del stock actual y no se puede deshacer.')) {
+                return;
+            }
+
+            const historialCollection = db.collection("historial_inventario");
+            const inventarioSnapshot = await inventoryCollection.get();
+
+            if (inventarioSnapshot.empty) {
+                alert("No hay productos en el inventario para archivar.");
+                return;
+            }
+
+            const batch = db.batch();
+            const today = new Date();
+            const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            const dia_semana = dias[today.getDay()];
+
+            inventarioSnapshot.forEach(doc => {
+                const item = doc.data();
+                const historialDocRef = historialCollection.doc(); // Crea un nuevo documento con ID automático
+
+                batch.set(historialDocRef, {
+                    id_producto: doc.id,
+                    nombre: item.name,
+                    cantidad: item.quantity,
+                    fecha: firebase.firestore.FieldValue.serverTimestamp(),
+                    dia_semana: dia_semana
+                });
+            });
+
+            try {
+                await batch.commit();
+                alert('✅ ¡Cierre de inventario completado! Se ha guardado el registro del día.');
+            } catch (error) {
+                console.error("Error al cerrar el inventario: ", error);
+                alert('❌ Hubo un error al guardar el historial de inventario. Por favor, revisa la consola.');
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const weekPicker = document.getElementById('week-picker');
+            const exportBtn = document.getElementById('export-csv-btn');
+
+            // Establecer la fecha actual en el selector
+            weekPicker.valueAsDate = new Date();
+
+            renderizarReporteSemanal(new Date());
+
+            weekPicker.addEventListener('change', () => {
+                const selectedDate = weekPicker.value ? new Date(weekPicker.value) : new Date();
+                renderizarReporteSemanal(selectedDate);
+            });
+
+            exportBtn.addEventListener('click', exportarSemanaCSV);
+        });
+
+        let lastReportData = {}; // Variable global para guardar los datos del último reporte
+        let lastStartDate = new Date(); // Variable global para guardar la fecha de inicio
+
+        async function renderizarReporteSemanal(date) {
+            const reportTableBody = document.getElementById('report-table-body');
+            if (!reportTableBody) return;
+            reportTableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Cargando...</td></tr>';
+
+            const targetDate = new Date(date); // Clonar la fecha para no modificar la original
+            const dayOfWeek = targetDate.getDay();
+            const diff = targetDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+            
+            const startOfWeek = new Date(targetDate.setDate(diff));
+            startOfWeek.setHours(0, 0, 0, 0);
+            lastStartDate = startOfWeek; // Guardar para el nombre del archivo
+
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(startOfWeek.getDate() + 6);
+            endOfWeek.setHours(23, 59, 59, 999);
+
+            const historialCollection = db.collection("historial_inventario");
+            const query = historialCollection
+                .where('fecha', '>=', startOfWeek)
+                .where('fecha', '<=', endOfWeek);
+
+            try {
+                const snapshot = await query.get();
+                if (snapshot.empty) {
+                    reportTableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No hay datos para la semana seleccionada.</td></tr>';
+                    lastReportData = {}; // Limpiar datos si no hay
+                    return;
+                }
+
+                const reportData = {};
+                const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+                snapshot.forEach(doc => {
+                    const record = doc.data();
+                    const productName = record.nombre;
+
+                    if (!reportData[productName]) {
+                        reportData[productName] = {};
+                    }
+                    reportData[productName][record.dia_semana] = record.cantidad;
+                });
+                
+                lastReportData = reportData; // Guardar los datos para exportar
+
+                reportTableBody.innerHTML = '';
+                const productNames = Object.keys(reportData).sort();
+
+                for (const productName of productNames) {
+                    const row = document.createElement('tr');
+                    
+                    const productCell = document.createElement('td');
+                    productCell.textContent = productName;
+                    row.appendChild(productCell);
+
+                    diasSemana.forEach(dia => {
+                        const quantityCell = document.createElement('td');
+                        const quantity = reportData[productName][dia];
+                        quantityCell.textContent = quantity !== undefined ? quantity : '-';
+                        quantityCell.style.textAlign = 'center';
+                        row.appendChild(quantityCell);
+                    });
+
+                    reportTableBody.appendChild(row);
+                }
+
+            } catch (error) {
+                console.error("Error al generar el reporte semanal: ", error);
+                reportTableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Error al cargar el reporte.</td></tr>';
+                lastReportData = {};
+            }
+        }
+
+        function exportarSemanaCSV() {
+            if (Object.keys(lastReportData).length === 0) {
+                alert("No hay datos para exportar.");
+                return;
+            }
+
+            const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            // Encabezados
+            csvContent += "Producto," + diasSemana.join(",") + "\r\n";
+
+            // Filas
+            const productNames = Object.keys(lastReportData).sort();
+            productNames.forEach(productName => {
+                let row = `"${productName}"`;
+                diasSemana.forEach(dia => {
+                    const quantity = lastReportData[productName][dia] !== undefined ? lastReportData[productName][dia] : '';
+                    row += `,${quantity}`;
+                });
+                csvContent += row + "\r\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+
+            const startDateString = lastStartDate.toISOString().split('T')[0];
+            link.setAttribute("download", `reporte-semana-${startDateString}.csv`);
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const deleteReportBtn = document.getElementById('delete-report-btn');
+
+            deleteReportBtn.addEventListener('click', async () => {
+                if (!confirm('¿Estás seguro de borrar el historial de la semana seleccionada? Esto no se puede deshacer.')) {
+                    return;
+                }
+
+                const startOfWeek = new Date(lastStartDate);
+                startOfWeek.setHours(0, 0, 0, 0);
+
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(startOfWeek.getDate() + 6);
+                endOfWeek.setHours(23, 59, 59, 999);
+
+                const historialCollection = db.collection("historial_inventario");
+                const query = historialCollection
+                    .where('fecha', '>=', startOfWeek)
+                    .where('fecha', '<=', endOfWeek);
+
+                try {
+                    const snapshot = await query.get();
+                    if (snapshot.empty) {
+                        alert('No hay datos para borrar en la semana seleccionada.');
+                        return;
+                    }
+
+                    const batch = db.batch();
+                    snapshot.docs.forEach(doc => {
+                        batch.delete(doc.ref);
+                    });
+
+                    await batch.commit();
+                    alert('Reporte eliminado correctamente.');
+                    renderizarReporteSemanal(new Date(lastStartDate));
+
+                } catch (error) {
+                    console.error("Error al eliminar el reporte: ", error);
+                    alert('Hubo un error al eliminar el reporte.');
+                }
+            });
         });
     </script>
 </body>
