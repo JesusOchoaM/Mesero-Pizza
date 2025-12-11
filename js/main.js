@@ -1,5 +1,8 @@
 let currentUser = null;
 document.addEventListener('DOMContentLoaded', () => {
+    const loginOverlay = document.getElementById('login-overlay');
+    const appContainer = document.getElementById('app-container');
+    const loginBtn = document.getElementById('btn-login');
 // Verificar sesión automática al iniciar
 const usuarioLocal = localStorage.getItem('usuarioActivo');
 const usuarioSession = sessionStorage.getItem('usuarioActivo');
@@ -21,9 +24,6 @@ window.cerrarSesion = function() {
     }
 };
 
-    const loginOverlay = document.getElementById('login-overlay');
-    const appContainer = document.getElementById('app-container');
-    const loginBtn = document.getElementById('btn-login');
     loginBtn.addEventListener('click', async () => {
         const user = document.getElementById('login-user').value.trim();
         const pass = document.getElementById('login-pass').value.trim();
@@ -45,7 +45,7 @@ window.cerrarSesion = function() {
 
             loginOverlay.style.display = 'none';
             appContainer.style.display = 'block';
-            alert(`¡Bienvenido al turno, ${currentUser}! 🍕`);
+            alert('¡Bienvenido al turno, ' + currentUser + '! 🍕');
         } else {
             document.getElementById('login-error').style.display = 'block';
         }
@@ -196,7 +196,7 @@ window.cerrarSesion = function() {
             { nombre: "Calzone Doble Queso", desc: "Full queso", precio: 9.50 },
             { nombre: "Calzone Vegetariana", desc: "Vegetales frescos", precio: 9.50 },
             // Pizzas Tradicionales
-            { 
+            {
                 nombre: "Pepperoni / Jamón", 
                 desc: "Clásica", 
                 precios: { peq: 5.00, med: 6.00, fam: 7.99 },
@@ -396,7 +396,7 @@ window.cerrarSesion = function() {
             { nombre: "Enchilada Tradicional", desc: "Unidad", precio: 0.75 },
             { nombre: "Yuca Frita + Chicharrón", desc: "Plato", precio: 2.50 },
             { nombre: "Canoa de Leche", desc: "Plátano dulce", precio: 1.75 },
-            { 
+            {
                 nombre: "Papas Francesas", 
                 desc: "Orden simple", 
                 precio: 1.99,
@@ -426,42 +426,42 @@ window.cerrarSesion = function() {
         categoria: "Bebidas y Postres",
         items: [
             // Frías
-            { 
+            {
                 nombre: "Coca Cola Lata", 
                 desc: "355ml", 
                 precio: 1.25,
                 ingredientes: { 'coca-cola-lata': 1 }
             },
-            { 
+            {
                 nombre: "Coca Cola Vidrio", 
                 desc: "Botella de vidrio", 
                 precio: 1.25, 
                 ingredientes: { 'coca-cola-vidrio': 1 }
             },
-            { 
+            {
                 nombre: "Kolashampan Lata", 
                 desc: "355ml", 
                 precio: 1.25,
                 ingredientes: { 'kolashampan-lata': 1 }
             },
-            { 
+            {
                 nombre: "Agua Botella", 
                 desc: "Natural", 
                 precio: 0.75,
                 ingredientes: { 'agua-embotellada': 1 }
             },
-            { 
+            {
                 nombre: "Pepsi 1.25L", 
                 desc: "Botella", 
                 precio: 1.75,
                 ingredientes: { 'pepsi-1-25l': 1 }
             },
-            { 
+            {
                 nombre: "Refresco Natural", 
                 desc: "Horchata / Cebada / Sandía / Fresa / Piña", 
                 precio: 1.75 
             },
-            { 
+            {
                 nombre: "Jugo de Naranja", 
                 desc: "Natural", 
                 precio: 1.99 
