@@ -6,6 +6,7 @@
     <title>Inventario - Just Great Pizza</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
     <style>
         body {
             background-color: #121212;
@@ -420,9 +421,12 @@
             const inventoryDisplay = document.getElementById('inventory-display');
             inventoryDisplay.innerHTML = '';
 
+            window.categoryMap = {}; // 1. Mapa de Categorías Global
             const itemsByCategory = {};
             snapshot.forEach(doc => {
                 const item = { id: doc.id, ...doc.data() };
+                window.categoryMap[item.name] = item.category; // Llenar el mapa
+
                 if (!itemsByCategory[item.category]) {
                     itemsByCategory[item.category] = [];
                 }
@@ -625,6 +629,7 @@
                 batch.set(historialDocRef, {
                     id_producto: doc.id,
                     nombre: item.name,
+                    categoria: item.category, // 2. Guardar Categoría en Historial Futuro
                     cantidad: item.quantity,
                     fecha: firebase.firestore.FieldValue.serverTimestamp(),
                     dia_semana: dia_semana
@@ -656,7 +661,7 @@
                 renderizarReporteSemanal(selectedDate);
             });
 
-            exportBtn.addEventListener('click', exportarSemanaCSV);
+            exportBtn.addEventListener('click', exportarSemanaExcel);
         });
 
         let lastReportData = {}; // Variable global para guardar los datos del último reporte
@@ -698,11 +703,15 @@
                 snapshot.forEach(doc => {
                     const record = doc.data();
                     const productName = record.nombre;
+                    const category = record.categoria || (window.categoryMap ? window.categoryMap[productName] : undefined) || 'Sin Categoría';
 
                     if (!reportData[productName]) {
-                        reportData[productName] = {};
+                        reportData[productName] = {
+                            category: category,
+                            days: {}
+                        };
                     }
-                    reportData[productName][record.dia_semana] = record.cantidad;
+                    reportData[productName].days[record.dia_semana] = record.cantidad;
                 });
                 
                 lastReportData = reportData; // Guardar los datos para exportar
@@ -719,7 +728,7 @@
 
                     diasSemana.forEach(dia => {
                         const quantityCell = document.createElement('td');
-                        const quantity = reportData[productName][dia];
+                        const quantity = reportData[productName].days[dia];
                         quantityCell.textContent = quantity !== undefined ? quantity : '-';
                         quantityCell.style.textAlign = 'center';
                         row.appendChild(quantityCell);
@@ -735,39 +744,50 @@
             }
         }
 
-        function exportarSemanaCSV() {
+        function exportarSemanaExcel() {
             if (Object.keys(lastReportData).length === 0) {
                 alert("No hay datos para exportar.");
                 return;
             }
 
             const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-            let csvContent = "data:text/csv;charset=utf-8,";
-            
-            // Encabezados
-            csvContent += "Producto," + diasSemana.join(",") + "\r\n";
+            const dataBySheet = {};
 
-            // Filas
-            const productNames = Object.keys(lastReportData).sort();
-            productNames.forEach(productName => {
-                let row = `"${productName}"`;
+            // Agrupar datos por categoría (hoja)
+            for (const productName in lastReportData) {
+                const productData = lastReportData[productName];
+                const category = productData.category || 'Sin Categoría';
+                
+                if (!dataBySheet[category]) {
+                    dataBySheet[category] = [];
+                }
+                
+                const productRow = { 'Producto': productName };
                 diasSemana.forEach(dia => {
-                    const quantity = lastReportData[productName][dia] !== undefined ? lastReportData[productName][dia] : '';
-                    row += `,${quantity}`;
+                    productRow[dia] = productData.days[dia] !== undefined ? productData.days[dia] : '';
                 });
-                csvContent += row + "\r\n";
-            });
+                dataBySheet[category].push(productRow);
+            }
 
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
+            const wb = XLSX.utils.book_new();
 
+            // Crear una hoja para cada categoría
+            for (const categoryName in dataBySheet) {
+                // Ordenar productos alfabéticamente dentro de cada categoría
+                const sortedProducts = dataBySheet[categoryName].sort((a, b) => a.Producto.localeCompare(b.Producto));
+                
+                const ws = XLSX.utils.json_to_sheet(sortedProducts, {
+                    header: ['Producto', ...diasSemana]
+                });
+
+                // Limpiar el nombre de la hoja para que sea válido (<= 31 chars, no chars prohibidos)
+                const safeSheetName = categoryName.substring(0, 31).replace(/[:\\/?*[\]]/g, '');
+                XLSX.utils.book_append_sheet(wb, ws, safeSheetName);
+            }
+
+            // Descargar el archivo
             const startDateString = lastStartDate.toISOString().split('T')[0];
-            link.setAttribute("download", `reporte-semana-${startDateString}.csv`);
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            XLSX.writeFile(wb, `Reporte_Inventario_${startDateString}.xlsx`);
         }
     </script>
     <script>
