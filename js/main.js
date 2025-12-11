@@ -1,55 +1,5 @@
-let currentUser = null;
+
 document.addEventListener('DOMContentLoaded', () => {
-    const loginOverlay = document.getElementById('login-overlay');
-    const appContainer = document.getElementById('app-container');
-    const loginBtn = document.getElementById('btn-login');
-// Verificar sesión automática al iniciar
-const usuarioLocal = localStorage.getItem('usuarioActivo');
-const usuarioSession = sessionStorage.getItem('usuarioActivo');
-const sesionGuardada = usuarioLocal || usuarioSession;
-
-if (sesionGuardada) {
-    currentUser = sesionGuardada;
-    loginOverlay.style.display = 'none';
-    appContainer.style.display = 'block';
-    console.log("Sesión restaurada para: " + currentUser);
-}
-
-// Función global para cerrar sesión
-window.cerrarSesion = function() {
-    if(confirm("¿Cerrar turno?")) {
-        localStorage.removeItem('usuarioActivo');
-        sessionStorage.removeItem('usuarioActivo');
-        location.reload();
-    }
-};
-
-    loginBtn.addEventListener('click', async () => {
-        const user = document.getElementById('login-user').value.trim();
-        const pass = document.getElementById('login-pass').value.trim();
-        
-        // Consulta a Firebase (Colección 'usuarios')
-        const snapshot = await db.collection('usuarios').where('usuario', '==', user).where('clave', '==', pass).get();
-        
-        if (!snapshot.empty) {
-            currentUser = snapshot.docs[0].data().nombre;
-            
-            // Verificamos si marcó la casilla "Mantener sesión"
-            const rememberMe = document.getElementById('remember-me').checked;
-            
-            if (rememberMe) {
-                localStorage.setItem('usuarioActivo', currentUser); // Guarda para siempre
-            } else {
-                sessionStorage.setItem('usuarioActivo', currentUser); // Guarda solo mientras el navegador esté abierto
-            }
-
-            loginOverlay.style.display = 'none';
-            appContainer.style.display = 'block';
-            alert('¡Bienvenido al turno, ' + currentUser + '! 🍕');
-        } else {
-            document.getElementById('login-error').style.display = 'block';
-        }
-    });
     const menuItemsContainer = document.getElementById('menu-items');
     const orderItemsContainer = document.getElementById('order-items');
     const orderTotalElement = document.getElementById('order-total');
@@ -122,7 +72,7 @@ window.cerrarSesion = function() {
             metodoPago: metodoPago,
             pagoCon: !isNaN(pagoCon) ? pagoCon : null,
             cambio: cambio,
-            mesero: currentUser,
+            mesero: "Mesero General",
         };
 
         try {
@@ -945,12 +895,3 @@ if (hayDescuentos) {
 }
 }
 });
-
-// Función global para cerrar sesión
-window.cerrarSesion = function() {
-    if(confirm("¿Cerrar turno?")) {
-        localStorage.removeItem('usuarioActivo');
-        sessionStorage.removeItem('usuarioActivo');
-        location.reload();
-    }
-};

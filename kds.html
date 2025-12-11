@@ -235,16 +235,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // SEGURIDAD: Verificar si hay un usuario logueado
-        const usuarioActivo = localStorage.getItem('usuarioActivo') || sessionStorage.getItem('usuarioActivo');
-
-        if (!usuarioActivo) {
-            alert("⚠️ Acceso denegado. Debes iniciar turno en la pantalla principal.");
-            window.location.href = "index.html";
-        } else {
-            console.log("Acceso autorizado para: " + usuarioActivo);
-        }
-
         // ============================================================
         // ⚠️ PEGA AQUÍ LAS MISMAS CREDENCIALES QUE EN INDEX.HTML ⚠️
         // ============================================================
