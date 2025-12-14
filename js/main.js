@@ -125,13 +125,13 @@ document.addEventListener('DOMContentLoaded', () => {
         categoria: "Entradas",
         descripcion: "Para empezar a compartir",
         items: [
-            { nombre: "Pan con Ajo", desc: "Tostado con mantequilla de ajo", precios: { "Orden (6)": 2.50, "Familiar (12)": 5.00 } },
-            { nombre: "Pan con Ajo y Loroco", desc: "Especialidad salvadoreña", precios: { "Orden (6)": 3.50, "Familiar (12)": 6.99 } },
-            { nombre: "Cheesestick", desc: "Palitos rellenos de queso", precios: { "Orden (10)": 3.50, "Familiar (20)": 6.99 } },
-            { nombre: "Cheesestick Loroco", desc: "Rellenos de queso y loroco", precios: { "Orden (10)": 3.99, "Familiar (20)": 7.99 } },
-            { nombre: "Aros de Cebolla", desc: "Empanizados y crujientes", precios: { "Orden (10)": 4.49, "Familiar (20)": 8.99 } },
-            { nombre: "Deditos de Queso", desc: "Queso frito empanizado", precios: { "Orden (6)": 4.99, "Familiar (12)": 9.99 } },
-            { nombre: "Wantan", desc: "Fritos y crujientes", precios: { "Orden (6)": 2.50, "Familiar (12)": 5.00 } }
+            { nombre: "Pan con Ajo", desc: "Tostado con mantequilla de ajo", precios: { "Orden (6)": 3.00, "Familiar (12)": 5.00 } },
+            { nombre: "Pan con Ajo y Loroco", desc: "Especialidad salvadoreña", precios: { "Orden (6)": 4.00, "Familiar (12)": 7.00 } },
+            { nombre: "Cheesestick", desc: "Palitos rellenos de queso", precios: { "Orden (10)": 4.00, "Familiar (20)": 7.00 } },
+            { nombre: "Cheesestick Loroco", desc: "Rellenos de queso y loroco", precios: { "Orden (10)": 4.00, "Familiar (20)": 8.00 } },
+            { nombre: "Aros de Cebolla", desc: "Empanizados y crujientes", precios: { "Orden (10)": 5.00, "Familiar (20)": 9.00 } },
+            { nombre: "Deditos de Queso", desc: "Queso frito empanizado", precios: { "Orden (6)": 5.00, "Familiar (12)": 10.00 } },
+            { nombre: "Wantan", desc: "Fritos y crujientes", precios: { "Orden (6)": 3.00, "Familiar (12)": 5.00 } }
         ]
     },
 
@@ -142,28 +142,28 @@ document.addEventListener('DOMContentLoaded', () => {
         items: [
             // Calzones
             { nombre: "Calzone de Jamón / Calzone de Pepperoni", desc: "Masa cerrada rellena", precio: 8.00 },
-            { nombre: "Calzone Suprema", desc: "Relleno especial", precio: 9.50 },
-            { nombre: "Calzone Doble Queso", desc: "Full queso", precio: 9.50 },
-            { nombre: "Calzone Vegetariana", desc: "Vegetales frescos", precio: 9.50 },
+            { nombre: "Calzone Suprema", desc: "Relleno especial", precio: 10.00 },
+            { nombre: "Calzone Doble Queso", desc: "Full queso", precio: 10.00 },
+            { nombre: "Calzone Vegetariana", desc: "Vegetales frescos", precio: 10.00 },
             // Pizzas Tradicionales
             {
                 nombre: "Pepperoni / Jamón", 
                 desc: "Clásica", 
-                precios: { peq: 5.00, med: 6.00, fam: 7.99 },
+                precios: { peq: 5.00, med: 6.00, fam: 8.00 },
                 ingredientes: { 'peperoni': 0.2, 'queso-mozzarella': 0.5, 'salsa-pizza': 0.1 }
             },
-            { nombre: "Pizza con Jamón y Vegetales / Pizza con Pepperoni y Vegetales", desc: "Cebolla, Tomate, Chile", precios: { peq: 5.50, med: 6.99, fam: 8.99 } },
-            { nombre: "Salchicha / Chorizo", desc: "Con Jamón o Pepperoni", precios: { peq: 6.00, med: 7.50, fam: 9.75 } },
-            { nombre: "Mitad y Mitad", desc: "Jamón y Pepperoni", precios: { peq: 6.00, med: 7.99, fam: 9.99 } },
-            { nombre: "Jalapeño / Loroco", desc: "Especialidades", precios: { peq: 7.00, med: 8.50, fam: 10.99 } },
-            { nombre: "Suprema / Vegetariana", desc: "Especialidades de la casa", precios: { peq: 6.50, med: 7.99, fam: 9.99 } },
-            { nombre: "Hawaiana", desc: "Jamón y Piña", precios: { peq: 7.00, med: 8.99, fam: 12.99 } },
-            { nombre: "Meat Lover", desc: "Todas las carnes", precios: { peq: 7.00, med: 8.99, fam: 12.99 } },
-            { nombre: "Doble Queso", desc: "Mozzarella extra", precios: { peq: 6.50, med: 8.99, fam: 10.99 } },
-            { nombre: "Pizza Alfredo con Pollo / Pizza Alfredo con Camarones", desc: "Salsa blanca", precios: { peq: 9.50, med: 14.99, fam: 19.99 } },
-            { nombre: "Carnívora", desc: "5 Carnes y vegetales", precios: { peq: 8.00, med: 10.99, fam: 16.99 } },
-            { nombre: "4 Estaciones", desc: "Jamón, Pepperoni, Suprema y Carne", precios: { peq: 8.00, med: 10.99, fam: 14.99 } },
-            { nombre: "Orilla de Queso (Extra)", desc: "Agrégalo a tu orden", precios: { peq: 2.75, med: 3.99, fam: 5.50 } }
+            { nombre: "Pizza con Jamón y Vegetales / Pizza con Pepperoni y Vegetales", desc: "Cebolla, Tomate, Chile", precios: { peq: 6.00, med: 7.00, fam: 9.00 } },
+            { nombre: "Salchicha / Chorizo", desc: "Con Jamón o Pepperoni", precios: { peq: 6.00, med: 8.00, fam: 10.00 } },
+            { nombre: "Mitad y Mitad", desc: "Jamón y Pepperoni", precios: { peq: 6.00, med: 8.00, fam: 10.00 } },
+            { nombre: "Jalapeño / Loroco", desc: "Especialidades", precios: { peq: 7.00, med: 9.00, fam: 11.00 } },
+            { nombre: "Suprema / Vegetariana", desc: "Especialidades de la casa", precios: { peq: 7.00, med: 8.00, fam: 10.00 } },
+            { nombre: "Hawaiana", desc: "Jamón y Piña", precios: { peq: 7.00, med: 9.00, fam: 13.00 } },
+            { nombre: "Meat Lover", desc: "Todas las carnes", precios: { peq: 7.00, med: 9.00, fam: 13.00 } },
+            { nombre: "Doble Queso", desc: "Mozzarella extra", precios: { peq: 7.00, med: 9.00, fam: 11.00 } },
+            { nombre: "Pizza Alfredo con Pollo / Pizza Alfredo con Camarones", desc: "Salsa blanca", precios: { peq: 10.00, med: 15.00, fam: 20.00 } },
+            { nombre: "Carnívora", desc: "5 Carnes y vegetales", precios: { peq: 8.00, med: 11.00, fam: 17.00 } },
+            { nombre: "4 Estaciones", desc: "Jamón, Pepperoni, Suprema y Carne", precios: { peq: 8.00, med: 11.00, fam: 15.00 } },
+            { nombre: "Orilla de Queso (Extra)", desc: "Agrégalo a tu orden", precios: { peq: 3.00, med: 4.00, fam: 6.00 } }
         ]
     },
 
@@ -171,53 +171,53 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         categoria: "Combos Familiares",
         items: [
-            { nombre: "Combo Pequeño", desc: "1 Pizza (1 ing), Pan c/ajo (6), Soda 1.25L", precio: 13.49,
+            { nombre: "Combo Pequeño", desc: "1 Pizza (1 ing), Pan c/ajo (6), Soda 1.25L", precio: 14.00,
                 options: [
                     { name: "Pizza", choices: ["Jamón", "Pepperoni", "Queso"] }
                 ]
             },
-            { nombre: "Combo Mediano", desc: "2 Pizzas (1 ing), Pan c/ajo (6), Soda 1.25L", precio: 21.99,
+            { nombre: "Combo Mediano", desc: "2 Pizzas (1 ing), Pan c/ajo (6), Soda 1.25L", precio: 22.00,
                 options: [
                     { name: "Pizza 1", choices: ["Jamón", "Pepperoni", "Queso"] },
                     { name: "Pizza 2", choices: ["Jamón", "Pepperoni", "Queso"] }
                 ]
             },
-            { nombre: "Combo Grande", desc: "1 Pizza (1 ing), 20 Alitas, 2 Papas, Soda 1.25L", precio: 26.99,
+            { nombre: "Combo Grande", desc: "1 Pizza (1 ing), 20 Alitas, 2 Papas, Soda 1.25L", precio: 27.00,
                 options: [
                     { name: "Pizza", choices: ["Jamón", "Pepperoni", "Queso"] },
                     { name: "Alitas", choices: ["BBQ", "Búfalo"] }
                 ]
             },
-            { nombre: "Combo Especial", desc: "1 Gigante Especialidad, 8 Alitas, Papas, Pan/Ajo, Ketchup", precio: 22.99,
+            { nombre: "Combo Especial", desc: "1 Gigante Especialidad, 8 Alitas, Papas, Pan/Ajo, Ketchup", precio: 23.00,
                 options: [
                     { name: "Pizza", choices: ["Suprema", "Vegetariana", "Hawaiana", "Meat Lover"] },
                     { name: "Alitas", choices: ["BBQ", "Búfalo"] }
                 ]
             },
-            { nombre: "Combo Combinado", desc: "1 Pizza 1 ing, 10 Alitas, Papas, Ketchup", precio: 16.99,
+            { nombre: "Combo Combinado", desc: "1 Pizza 1 ing, 10 Alitas, Papas, Ketchup", precio: 17.00,
                 options: [
                     { name: "Pizza", choices: ["Jamón", "Pepperoni", "Queso"] },
                     { name: "Alitas", choices: ["BBQ", "Búfalo"] }
                 ]
             },
-            { nombre: "Combo XL", desc: "1 Gigante Esp, Pan ajo, 5 Piezas Pollo, Soda 1.25L", precio: 27.49,
+            { nombre: "Combo XL", desc: "1 Gigante Esp, Pan ajo, 5 Piezas Pollo, Soda 1.25L", precio: 28.00,
                 options: [
                     { name: "Pizza", choices: ["Suprema", "Vegetariana", "Hawaiana", "Meat Lover"] }
                 ]
             },
-            { nombre: "Combo #1", desc: "2 Gigantes Especialidad + Pan con ajo", precio: 23.49,
+            { nombre: "Combo #1", desc: "2 Gigantes Especialidad + Pan con ajo", precio: 24.00,
                 options: [
                     { name: "Pizza 1", choices: ["Suprema", "Vegetariana", "Hawaiana", "Meat Lover"] },
                     { name: "Pizza 2", choices: ["Suprema", "Vegetariana", "Hawaiana", "Meat Lover"] }
                 ]
             },
-            { nombre: "Combo #2", desc: "1 Pizza (1 ing), 10 Alitas, Papas, CheeseStick", precio: 22.99,
+            { nombre: "Combo #2", desc: "1 Pizza (1 ing), 10 Alitas, Papas, CheeseStick", precio: 23.00,
                 options: [
                     { name: "Pizza", choices: ["Jamón", "Pepperoni", "Queso"] },
                     { name: "Alitas", choices: ["BBQ", "Búfalo"] }
                 ]
             },
-            { nombre: "Combo #3", desc: "3 Gigantes (1 Esp, 2 Un Ing), 10 Alitas, Papas", precio: 38.99,
+            { nombre: "Combo #3", desc: "3 Gigantes (1 Esp, 2 Un Ing), 10 Alitas, Papas", precio: 39.00,
                 options: [
                     { name: "Pizza Especialidad", choices: ["Suprema", "Vegetariana", "Hawaiana", "Meat Lover"] },
                     { name: "Pizza 1 Ingrediente 1", choices: ["Jamón", "Pepperoni", "Queso"] },
@@ -229,8 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
     nombre: "Combo Familiar $20",
     desc: "1 Pizza Gigante + Alitas. Selecciona precio si es Tradicional o Especialidad.",
     precios: {
-        "Tradicional": 19.99,
-        "Con Especialidad (+1.99)": 21.98
+        "Tradicional": 20.00,
+        "Con Especialidad (+2.00)": 22.00
     },
     options: [
         { name: "Sabor Pizza", choices: ["Jamón", "Pepperoni", "Suprema (Especialidad)", "Hawaiana (Especialidad)", "Meat Lover (Especialidad)", "Vegetariana (Especialidad)"] },
@@ -245,17 +245,17 @@ document.addEventListener('DOMContentLoaded', () => {
         categoria: "Pupusas",
         descripcion: "Delicias típicas",
         items: [
-            { nombre: "Revuelta / Frijol con Queso", desc: "Tradicionales", precio: 0.90 },
+            { nombre: "Revuelta / Frijol con Queso", desc: "Tradicionales", precio: 1.00 },
             { nombre: "Queso", desc: "Puro queso", precio: 1.00 },
-            { nombre: "Queso con Loroco", desc: "Especialidad", precio: 1.25 },
-            { nombre: "Queso Jalapeño", desc: "Picante", precio: 1.15 },
-            { nombre: "Pupusa de Queso con Pepperoni / Pupusa de Queso con Jamón", desc: "Especialidad", precio: 1.35 },
-            { nombre: "Queso Ayote / Ajo", desc: "Vegetariana", precio: 1.25 },
-            { nombre: "Chicharrón", desc: "Solo carne", precio: 1.50 },
-            { nombre: "Queso con Pollo", desc: "Especialidad", precio: 1.50 },
-            { nombre: "Queso Hongos / Camarón", desc: "Premium", precio: 1.60 },
-            { nombre: "Nutella", desc: "Postre", precio: 1.99 },
-            { nombre: "3 Quesos (Loca)", desc: "Mozzarella + Cheddar + Quesillo", precio: 1.99 }
+            { nombre: "Queso con Loroco", desc: "Especialidad", precio: 1.00 },
+            { nombre: "Queso Jalapeño", desc: "Picante", precio: 1.00 },
+            { nombre: "Pupusa de Queso con Pepperoni / Pupusa de Queso con Jamón", desc: "Especialidad", precio: 1.00 },
+            { nombre: "Queso Ayote / Ajo", desc: "Vegetariana", precio: 1.00 },
+            { nombre: "Chicharrón", desc: "Solo carne", precio: 2.00 },
+            { nombre: "Queso con Pollo", desc: "Especialidad", precio: 2.00 },
+            { nombre: "Queso Hongos / Camarón", desc: "Premium", precio: 2.00 },
+            { nombre: "Nutella", desc: "Postre", precio: 2.00 },
+            { nombre: "3 Quesos (Loca)", desc: "Mozzarella + Cheddar + Quesillo", precio: 2.00 }
         ]
     },
 
@@ -264,12 +264,12 @@ document.addEventListener('DOMContentLoaded', () => {
         categoria: "Zona de Fritura",
         descripcion: "Alitas y Snacks",
         items: [
-            { nombre: "Alitas Pequeño (7) BBQ / Alitas Pequeño (7) Búfalo", desc: "Papa, Aderezo", precio: 6.99 },
-            { nombre: "Alitas Mediano (20) BBQ / Alitas Mediano (20) Búfalo", desc: "Papa, Aderezo", precio: 16.99 },
-            { nombre: "Alitas Grande (30) BBQ / Alitas Grande (30) Búfalo", desc: "Papa, Aderezo", precio: 22.99 },
-            { nombre: "Camarones Empanizados", desc: "12 camarones, papas, tortilla", precio: 10.99 },
-            { nombre: "Tacos de Pollo", desc: "5 tacos, papas, tortilla", precio: 7.99 },
-            { nombre: "Plato de Costilla", desc: "8onz costilla cerdo, papa, ensalada", precio: 8.99 },
+            { nombre: "Alitas Pequeño (7) BBQ / Alitas Pequeño (7) Búfalo", desc: "Papa, Aderezo", precio: 7.00 },
+            { nombre: "Alitas Mediano (20) BBQ / Alitas Mediano (20) Búfalo", desc: "Papa, Aderezo", precio: 17.00 },
+            { nombre: "Alitas Grande (30) BBQ / Alitas Grande (30) Búfalo", desc: "Papa, Aderezo", precio: 23.00 },
+            { nombre: "Camarones Empanizados", desc: "12 camarones, papas, tortilla", precio: 11.00 },
+            { nombre: "Tacos de Pollo", desc: "5 tacos, papas, tortilla", precio: 8.00 },
+            { nombre: "Plato de Costilla", desc: "8onz costilla cerdo, papa, ensalada", precio: 9.00 },
             { nombre: "Nuggets de Pollo", desc: "10 nuggets, papas, soda", precio: 7.00 }
         ]
     },
@@ -280,20 +280,20 @@ document.addEventListener('DOMContentLoaded', () => {
         descripcion: "Paninis, Rellenitas y Chicharrones",
         items: [
             // Rellenitas
-            { nombre: "Rellenita de Pollo", desc: "Especialidad", precio: 8.50 },
-            { nombre: "Rellenita Tradicional / Full Cheese", desc: "Quesos", precio: 7.50 },
-            { nombre: "Rellenita Cangrejo", desc: "Premium", precio: 8.99 },
+            { nombre: "Rellenita de Pollo", desc: "Especialidad", precio: 9.00 },
+            { nombre: "Rellenita Tradicional / Full Cheese", desc: "Quesos", precio: 8.00 },
+            { nombre: "Rellenita Cangrejo", desc: "Premium", precio: 9.00 },
             // Paninis (Todos con papas)
-            { nombre: "Panini Tradicional", desc: "Jamón pavo, quesos, vegetales", precio: 7.49 },
-            { nombre: "Panini Loroco", desc: "Con papas francesas", precio: 8.49 },
-            { nombre: "Panini Quesos", desc: "Con papas francesas", precio: 7.49 },
-            { nombre: "Panini Chicharrones", desc: "Con papas francesas", precio: 9.49 },
-            { nombre: "Panini Jalapeño / Hongos", desc: "Con papas francesas", precio: 8.99 },
-            { nombre: "Panini Hawaiano / Pollo / Pizza", desc: "Con papas francesas", precio: 8.49 },
-            { nombre: "Panini Camarones", desc: "Con papas francesas", precio: 9.49 },
+            { nombre: "Panini Tradicional", desc: "Jamón pavo, quesos, vegetales", precio: 8.00 },
+            { nombre: "Panini Loroco", desc: "Con papas francesas", precio: 9.00 },
+            { nombre: "Panini Quesos", desc: "Con papas francesas", precio: 8.00 },
+            { nombre: "Panini Chicharrones", desc: "Con papas francesas", precio: 10.00 },
+            { nombre: "Panini Jalapeño / Hongos", desc: "Con papas francesas", precio: 9.00 },
+            { nombre: "Panini Hawaiano / Pollo / Pizza", desc: "Con papas francesas", precio: 9.00 },
+            { nombre: "Panini Camarones", desc: "Con papas francesas", precio: 10.00 },
             // Chicharrones
-            { nombre: "Chicharrones (Media Libra)", desc: "Frijoles, cebolla, tortilla, papas", precio: 9.49 },
-            { nombre: "Chicharrones (Libra)", desc: "Frijoles, cebolla, tortilla, papas", precio: 15.99 }
+            { nombre: "Chicharrones (Media Libra)", desc: "Frijoles, cebolla, tortilla, papas", precio: 10.00 },
+            { nombre: "Chicharrones (Libra)", desc: "Frijoles, cebolla, tortilla, papas", precio: 16.00 }
         ]
     },
 
@@ -301,12 +301,12 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         categoria: "Pollo Frito",
         items: [
-            { nombre: "1 Pieza (Personal)", desc: "Pollo, papa, tortilla, aderezo", precio: 3.99 },
-            { nombre: "2 Piezas", desc: "Pollo, papa, tortilla, aderezo", precio: 5.49 },
-            { nombre: "3 Piezas", desc: "Pollo, papa, tortilla, aderezo", precio: 6.99 },
-            { nombre: "Familiar 5 Piezas", desc: "5 Pollo, 2 papas, aderezo", precio: 11.49 },
-            { nombre: "Familiar 8 Piezas", desc: "8 Pollo, 3 papas, aderezo", precio: 18.99 },
-            { nombre: "Familiar 12 Piezas", desc: "12 Pollo, 5 papas, aderezo", precio: 26.99 }
+            { nombre: "1 Pieza (Personal)", desc: "Pollo, papa, tortilla, aderezo", precio: 4.00 },
+            { nombre: "2 Piezas", desc: "Pollo, papa, tortilla, aderezo", precio: 6.00 },
+            { nombre: "3 Piezas", desc: "Pollo, papa, tortilla, aderezo", precio: 7.00 },
+            { nombre: "Familiar 5 Piezas", desc: "5 Pollo, 2 papas, aderezo", precio: 12.00 },
+            { nombre: "Familiar 8 Piezas", desc: "8 Pollo, 3 papas, aderezo", precio: 19.00 },
+            { nombre: "Familiar 12 Piezas", desc: "12 Pollo, 5 papas, aderezo", precio: 27.00 }
         ]
     },
 
@@ -315,14 +315,14 @@ document.addEventListener('DOMContentLoaded', () => {
         categoria: "Hamburguesas y Hot Dogs",
         items: [
             { nombre: "Hamburguesa Medieval", desc: "Pollo + 3 alitas + papas + soda", precio: 8.00 },
-            { nombre: "Hamburguesa de Carne", desc: "Res + papas", precio: 6.50 },
-            { nombre: "Hamburguesa Camarones", desc: "Camarones empanizados + papas", precio: 7.50 },
-            { nombre: "Hamburguesa Doble Carne", desc: "Doble res + papas", precio: 8.99 },
+            { nombre: "Hamburguesa de Carne", desc: "Res + papas", precio: 7.00 },
+            { nombre: "Hamburguesa Camarones", desc: "Camarones empanizados + papas", precio: 8.00 },
+            { nombre: "Hamburguesa Doble Carne", desc: "Doble res + papas", precio: 9.00 },
             { nombre: "Hot Dog Intenso", desc: "Salchicha jumbo + queso", precio: 1.00 },
-            { nombre: "Hot Dog El Tóxico", desc: "Con chimichurri y cebolla curtida", precio: 1.25 },
-            { nombre: "Hot Dog Conquistador", desc: "Envuelto en tocino", precio: 1.75 },
+            { nombre: "Hot Dog El Tóxico", desc: "Con chimichurri y cebolla curtida", precio: 1.00 },
+            { nombre: "Hot Dog Conquistador", desc: "Envuelto en tocino", precio: 2.00 },
             { nombre: "Hot Dog El Exótico", desc: "Tocino + Salsa aguacate", precio: 2.00 },
-            { nombre: "Pizza Hot Dog", desc: "Salsa italiana y pepperoni", precio: 2.50 }
+            { nombre: "Pizza Hot Dog", desc: "Salsa italiana y pepperoni", precio: 3.00 }
         ]
     },
 
@@ -332,42 +332,42 @@ document.addEventListener('DOMContentLoaded', () => {
         descripcion: "Quesadillas, Burritos, Lasañas y Típicos",
         items: [
             // Quesadillas
-            { nombre: "Quesadilla de Pollo / Loroco", desc: "Con queso", precio: 8.99 },
-            { nombre: "Quesadilla Tradicional / Jamón", desc: "Con queso", precio: 7.99 },
+            { nombre: "Quesadilla de Pollo / Loroco", desc: "Con queso", precio: 9.00 },
+            { nombre: "Quesadilla Tradicional / Jamón", desc: "Con queso", precio: 8.00 },
             // Burritos
-            { nombre: "Burrito de Pollo", desc: "Con papas y aderezo", precio: 7.50 },
-            { nombre: "Burrito de Carne", desc: "Con papas y aderezo", precio: 8.50 },
+            { nombre: "Burrito de Pollo", desc: "Con papas y aderezo", precio: 8.00 },
+            { nombre: "Burrito de Carne", desc: "Con papas y aderezo", precio: 9.00 },
             { nombre: "Burrito de Camarón", desc: "Con papas y aderezo", precio: 9.00 },
             // Lasaña y Ensalada
-            { nombre: "Lasaña Pollo con Hongos", desc: "Pasta artesanal", precio: 8.99 },
-            { nombre: "Lasaña Tres Quesos", desc: "Mozzarella, americano, crema", precio: 8.50 },
-            { nombre: "Ensalada de la Casa", desc: "Atún, huevo, vegetales", precio: 6.99 },
+            { nombre: "Lasaña Pollo con Hongos", desc: "Pasta artesanal", precio: 9.00 },
+            { nombre: "Lasaña Tres Quesos", desc: "Mozzarella, americano, crema", precio: 9.00 },
+            { nombre: "Ensalada de la Casa", desc: "Atún, huevo, vegetales", precio: 7.00 },
             // Típicos y Papas
-            { nombre: "Enchilada Tradicional", desc: "Unidad", precio: 0.75 },
-            { nombre: "Yuca Frita + Chicharrón", desc: "Plato", precio: 2.50 },
-            { nombre: "Canoa de Leche", desc: "Plátano dulce", precio: 1.75 },
+            { nombre: "Enchilada Tradicional", desc: "Unidad", precio: 1.00 },
+            { nombre: "Yuca Frita + Chicharrón", desc: "Plato", precio: 3.00 },
+            { nombre: "Canoa de Leche", desc: "Plátano dulce", precio: 2.00 },
             {
                 nombre: "Papas Francesas", 
                 desc: "Orden simple", 
-                precio: 1.99,
+                precio: 2.00,
                 ingredientes: { 'papas': 0.5, 'aceite': 0.05, 'ketchup-bolsita': 2 }
             },
-            { nombre: "Papas de Feria", desc: "Ketchup, aderezo, queso", precio: 3.50 },
-            { nombre: "Papas Cheddar y Tocino", desc: "Especial", precio: 3.50 }
+            { nombre: "Papas de Feria", desc: "Ketchup, aderezo, queso", precio: 4.00 },
+            { nombre: "Papas Cheddar y Tocino", desc: "Especial", precio: 4.00 }
         ]
     },
 
-    // 10. MENÚ INFANTIL (Todo a $4.99)
+    // 10. MENÚ INFANTIL (Todo a $5.00)
     {
-        categoria: "Menú Infantil ($4.99)",
+        categoria: "Menú Infantil ($5.00)",
         descripcion: "Incluye Papas, Aderezo y Soda",
         items: [
-            { nombre: "Infantil Alitas BBQ / Infantil Alitas Búfalo", desc: "4 Alitas", precio: 4.99 },
-            { nombre: "Infantil Pechugitas", desc: "4 Pechugitas", precio: 4.99 },
-            { nombre: "Infantil Hamburguesa", desc: "Hamburguesa de Pollo", precio: 4.99 },
-            { nombre: "Infantil Pizza de Jamón / Infantil Pizza de Pepperoni", desc: "Pizza 4 porciones + 2 Pan ajo", precio: 4.99 },
-            { nombre: "Infantil Nuggets", desc: "5 Nuggets", precio: 4.99 },
-            { nombre: "Infantil Rellenita", desc: "1 Rellenita Tradicional", precio: 4.99 }
+            { nombre: "Infantil Alitas BBQ / Infantil Alitas Búfalo", desc: "4 Alitas", precio: 5.00 },
+            { nombre: "Infantil Pechugitas", desc: "4 Pechugitas", precio: 5.00 },
+            { nombre: "Infantil Hamburguesa", desc: "Hamburguesa de Pollo", precio: 5.00 },
+            { nombre: "Infantil Pizza de Jamón / Infantil Pizza de Pepperoni", desc: "Pizza 4 porciones + 2 Pan ajo", precio: 5.00 },
+            { nombre: "Infantil Nuggets", desc: "5 Nuggets", precio: 5.00 },
+            { nombre: "Infantil Rellenita", desc: "1 Rellenita Tradicional", precio: 5.00 }
         ]
     },
 
@@ -379,59 +379,59 @@ document.addEventListener('DOMContentLoaded', () => {
             {
                 nombre: "Coca Cola Lata", 
                 desc: "355ml", 
-                precio: 1.25,
+                precio: 1.00,
                 ingredientes: { 'coca-cola-lata': 1 }
             },
             {
                 nombre: "Coca Cola Vidrio", 
                 desc: "Botella de vidrio", 
-                precio: 1.25, 
+                precio: 1.00, 
                 ingredientes: { 'coca-cola-vidrio': 1 }
             },
             {
                 nombre: "Kolashampan Lata", 
                 desc: "355ml", 
-                precio: 1.25,
+                precio: 1.00,
                 ingredientes: { 'kolashampan-lata': 1 }
             },
             {
                 nombre: "Agua Botella", 
                 desc: "Natural", 
-                precio: 0.75,
+                precio: 1.00,
                 ingredientes: { 'agua-embotellada': 1 }
             },
             {
                 nombre: "Pepsi 1.25L", 
                 desc: "Botella", 
-                precio: 1.75,
+                precio: 2.00,
                 ingredientes: { 'pepsi-1-25l': 1 }
             },
             {
                 nombre: "Refresco Natural", 
                 desc: "Horchata / Cebada / Sandía / Fresa / Piña", 
-                precio: 1.75 
+                precio: 2.00 
             },
             {
                 nombre: "Jugo de Naranja", 
                 desc: "Natural", 
-                precio: 1.99 
+                precio: 2.00 
             },
             // Calientes
             { nombre: "Café Negro / Té", desc: "Caliente", precio: 1.00 },
-            { nombre: "Café con Leche", desc: "Caliente", precio: 1.50 },
+            { nombre: "Café con Leche", desc: "Caliente", precio: 2.00 },
             // Alcohol
-            { nombre: "Cerveza Pilsener", desc: "Botella", precio: 1.75, ingredientes: { 'cerveza-pilsener': 1 } },
-            { nombre: "Cerveza Golden", desc: "Botella", precio: 1.75, ingredientes: { 'cerveza-golden': 1 } },
-            { nombre: "Mix Michelada", desc: "Preparado", precio: 1.50 },
-            { nombre: "Coctel de Tequila / Coctel de Ron / Coctel de Vodka", desc: "Variedad", precio: 3.50 },
+            { nombre: "Cerveza Pilsener", desc: "Botella", precio: 2.00, ingredientes: { 'cerveza-pilsener': 1 } },
+            { nombre: "Cerveza Golden", desc: "Botella", precio: 2.00, ingredientes: { 'cerveza-golden': 1 } },
+            { nombre: "Mix Michelada", desc: "Preparado", precio: 2.00 },
+            { nombre: "Coctel de Tequila / Coctel de Ron / Coctel de Vodka", desc: "Variedad", precio: 4.00 },
             // Especiales
-            { nombre: "Limonada Natural / Limonada de Fresa / Limonada de Hierbabuena", desc: "Preparada", precio: 3.50 },
-            { nombre: "Licuado de Fresa / Licuado de Banano / Licuado de Oreo", desc: "Con leche", precio: 1.50 },
-            { nombre: "Frozen de Café / Frozen de Frutas", desc: "Granizado", precio: 2.50 },
+            { nombre: "Limonada Natural / Limonada de Fresa / Limonada de Hierbabuena", desc: "Preparada", precio: 4.00 },
+            { nombre: "Licuado de Fresa / Licuado de Banano / Licuado de Oreo", desc: "Con leche", precio: 2.00 },
+            { nombre: "Frozen de Café / Frozen de Frutas", desc: "Granizado", precio: 3.00 },
             // Postres
-            { nombre: "Mini Pan Cake", desc: "Postre", precio: 2.99 },
-            { nombre: "Copa de Fruta con Miel / Copa de Fruta con Yogurt", desc: "Miel o Yogurt", precio: 2.99 },
-            { nombre: "Rollitos de Nutella", desc: "Con banano", precio: 3.50 }
+            { nombre: "Mini Pan Cake", desc: "Postre", precio: 3.00 },
+            { nombre: "Copa de Fruta con Miel / Copa de Fruta con Yogurt", desc: "Miel o Yogurt", precio: 3.00 },
+            { nombre: "Rollitos de Nutella", desc: "Con banano", precio: 4.00 }
         ]
     },
 
@@ -440,23 +440,23 @@ document.addEventListener('DOMContentLoaded', () => {
         categoria: "Crepas y Postres",
         items: [
             // --- CLÁSICAS ($3.50) ---
-            { nombre: "Banano Nutella", desc: "Clásica", precio: 3.50 },
-            { nombre: "Fresa Nutella", desc: "Clásica", precio: 3.50 },
-            { nombre: "Oreo Caramelo", desc: "Toque dulce", precio: 3.50 },
-            { nombre: "Oreo Nutella", desc: "Toque dulce", precio: 3.50 },
+            { nombre: "Banano Nutella", desc: "Clásica", precio: 4.00 },
+            { nombre: "Fresa Nutella", desc: "Clásica", precio: 4.00 },
+            { nombre: "Oreo Caramelo", desc: "Toque dulce", precio: 4.00 },
+            { nombre: "Oreo Nutella", desc: "Toque dulce", precio: 4.00 },
             
             // --- COMBINACIONES ($3.99) ---
-            { nombre: "Fresa, Banano, Nutella", desc: "Combinación frutal", precio: 3.99 },
-            { nombre: "Fresa, Banano, Caramelo", desc: "Combinación frutal", precio: 3.99 },
-            { nombre: "Oreo, Fresa, Caramelo", desc: "Combinación especial", precio: 3.99 },
-            { nombre: "Oreo, Fresa, Nutella", desc: "Combinación especial", precio: 3.99 },
+            { nombre: "Fresa, Banano, Nutella", desc: "Combinación frutal", precio: 4.00 },
+            { nombre: "Fresa, Banano, Caramelo", desc: "Combinación frutal", precio: 4.00 },
+            { nombre: "Oreo, Fresa, Caramelo", desc: "Combinación especial", precio: 4.00 },
+            { nombre: "Oreo, Fresa, Nutella", desc: "Combinación especial", precio: 4.00 },
 
             // --- SIMPLES ($2.50) ---
-            { nombre: "Crepa Nutella (Simple)", desc: "Crepa básica solo con topping", precio: 2.50 },
-            { nombre: "Crepa Caramelo (Simple)", desc: "Crepa básica solo con topping", precio: 2.50 },
+            { nombre: "Crepa Nutella (Simple)", desc: "Crepa básica solo con topping", precio: 3.00 },
+            { nombre: "Crepa Caramelo (Simple)", desc: "Crepa básica solo con topping", precio: 3.00 },
 
             // --- MIXTA ($4.49) ---
-            { nombre: "Mixta Especial", desc: "Oreo, banano, fresa, granola y Chantilly", precio: 4.49 }
+            { nombre: "Mixta Especial", desc: "Oreo, banano, fresa, granola y Chantilly", precio: 5.00 }
         ]
     },
 
@@ -465,13 +465,13 @@ document.addEventListener('DOMContentLoaded', () => {
         categoria: "Cenas Típicas",
         descripcion: "Servidas de 5:00 PM en adelante",
         items: [
-            { nombre: "Cena Tradicional con Huevos Revueltos / Cena Tradicional con Huevos Picados / Cena Tradicional con Huevos con Vegetales / Cena Tradicional con Huevo Estrellado", desc: "2 Huevos, frijoles, plátano, pan, café", precio: 3.50 },
-            { nombre: "Cena Ranchera con Huevos Revueltos / Cena Ranchera con Huevos Picados / Cena Ranchera con Huevos con Vegetales / Cena Ranchera con Huevo Estrellado", desc: "Huevos, frijoles, plátano, chorizo, tocino", precio: 4.25 },
-            { nombre: "Omelette con jamón y queso / Omelette con vegetales", desc: "Con jamón y queso", precio: 4.50 },
-            { nombre: "Pan Cakes", desc: "Con Nutella, miel, banano", precio: 3.99 },
-            { nombre: "Cena Americana con Huevos Revueltos / Cena Americana con Huevos Picados / Cena Americana con Huevos con Vegetales / Cena Americana con Huevo Estrellado", desc: "Huevos, pancake, frijoles, chorizo", precio: 5.25 },
-            { nombre: "Cena de Toque con Huevos Revueltos / Cena de Toque con Huevos Picados / Cena de Toque con Huevos con Vegetales / Cena de Toque con Huevo Estrellado", desc: "Huevos, frijoles, 3 alitas", precio: 4.99 },
-            { nombre: "Burrito Cena con Huevos Revueltos / Burrito Cena con Huevos Picados / Burrito Cena con Huevos con Vegetales / Burrito Cena con Huevo Estrellado", desc: "Huevos, frijoles, queso", precio: 4.50 }
+            { nombre: "Cena Tradicional con Huevos Revueltos / Cena Tradicional con Huevos Picados / Cena Tradicional con Huevos con Vegetales / Cena Tradicional con Huevo Estrellado", desc: "2 Huevos, frijoles, plátano, pan, café", precio: 4.00 },
+            { nombre: "Cena Ranchera con Huevos Revueltos / Cena Ranchera con Huevos Picados / Cena Ranchera con Huevos con Vegetales / Cena Ranchera con Huevo Estrellado", desc: "Huevos, frijoles, plátano, chorizo, tocino", precio: 4.00 },
+            { nombre: "Omelette con jamón y queso / Omelette con vegetales", desc: "Con jamón y queso", precio: 5.00 },
+            { nombre: "Pan Cakes", desc: "Con Nutella, miel, banano", precio: 4.00 },
+            { nombre: "Cena Americana con Huevos Revueltos / Cena Americana con Huevos Picados / Cena Americana con Huevos con Vegetales / Cena Americana con Huevo Estrellado", desc: "Huevos, pancake, frijoles, chorizo", precio: 5.00 },
+            { nombre: "Cena de Toque con Huevos Revueltos / Cena de Toque con Huevos Picados / Cena de Toque con Huevos con Vegetales / Cena de Toque con Huevo Estrellado", desc: "Huevos, frijoles, 3 alitas", precio: 5.00 },
+            { nombre: "Burrito Cena con Huevos Revueltos / Burrito Cena con Huevos Picados / Burrito Cena con Huevos con Vegetales / Burrito Cena con Huevo Estrellado", desc: "Huevos, frijoles, queso", precio: 5.00 }
         ]
     },
 
@@ -479,15 +479,15 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         categoria: "Extras",
         items: [
-            { nombre: "Queso", desc: "Adicional", precio: 0.75 },
-            { nombre: "Frijoles Molidos", desc: "Adicional", precio: 0.75 },
-            { nombre: "Plátanos Fritos", desc: "Adicional", precio: 0.75 },
+            { nombre: "Queso", desc: "Adicional", precio: 1.00 },
+            { nombre: "Frijoles Molidos", desc: "Adicional", precio: 1.00 },
+            { nombre: "Plátanos Fritos", desc: "Adicional", precio: 1.00 },
             { nombre: "Pan Francés", desc: "Adicional", precio: 0.20 },
-            { nombre: "Tortilla Frita", desc: "Adicional", precio: 0.75 },
-            { nombre: "Tocino", desc: "Adicional", precio: 0.99 },
-            { nombre: "Salchicha", desc: "Adicional", precio: 0.75 },
-            { nombre: "Chorizo", desc: "Adicional", precio: 0.75 },
-            { nombre: "Crema", desc: "Adicional", precio: 0.75 }
+            { nombre: "Tortilla Frita", desc: "Adicional", precio: 1.00 },
+            { nombre: "Tocino", desc: "Adicional", precio: 1.00 },
+            { nombre: "Salchicha", desc: "Adicional", precio: 1.00 },
+            { nombre: "Chorizo", desc: "Adicional", precio: 1.00 },
+            { nombre: "Crema", desc: "Adicional", precio: 1.00 }
         ]
     }
 ];
